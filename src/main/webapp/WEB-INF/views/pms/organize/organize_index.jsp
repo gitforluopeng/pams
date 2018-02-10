@@ -1,0 +1,84 @@
+﻿<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%
+String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<base href="<%=basePath%>">
+    <meta charset="UTF-8">
+    <title>组织机构管理</title>
+    <script src="resources/layui/layui.js"></script>
+    <link rel="stylesheet" href="resources/layui/css/layui.css">
+    <link rel="stylesheet" href="resources/systemManagement/organizeManagement/css/organize_index.css">
+    <script src="resources/jquery-3.2.1.min.js"></script>
+    <script src="resources/systemManagement/organizeManagement/js/organize_index.js"></script>
+</head>
+<body>
+<div style="width:100%;height: 98%;" class="layui-form" lay-filter="selectdiv">
+    <div id="div-toolbar" style="width: 100%;height: 60px;background-color: #DFEFEF">
+
+        <div class="layui-inline" style="margin-left: 30px;margin-top: 10px">单位名称:
+        <div style="margin-left: 10px;" class="layui-inline">
+            <select id="unitname" class="layui-select" name="useruntilname" lay-filter="unitname">
+                <option value="">请选择</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-inline" style="margin-left: 5%;margin-top: 10px">部门名称:
+    <div style="margin-left: 10px;" class="layui-inline">
+        <select id="deptname" class="layui-select" lay-filter="deptname">
+        </select>
+    </div>
+    </div>
+    <div class="layui-inline" style="margin-left: 5%;margin-top: 10px">
+        <button id="queryBtn" class="layui-btn layui-btn-normal">查询</button>
+        <button id="resetBtn" class="layui-btn layui-btn-normal">重置</button>
+    </div>
+    </div>
+    <div id="div-add-toolbar" style="width: 100%;height: 70px;background-color: #F3F3F3;">
+        <div class="layui-inline" style="font-size: 18px;margin-top: 26px;margin-left: 20px">
+			<div class="layui-inline"><img style="width:3px;height:15px;margin-bottom: 4px" src="resources/images/辅助线.png"></div>&nbsp;数据列表</div>
+        <div class="layui-inline" style="float: right;margin-top: 15px;margin-right: 20px">
+        	<button id="backBtn" class="layui-btn layui-btn-normal" style="display:none;">返回上一级</button>
+            <button id="addBtn" class="layui-btn layui-btn-danger">添加部门</button>
+            <button id="addUnitBtn" class="layui-btn layui-btn-danger">添加单位</button>
+        </div>
+    </div>
+        <div id="div-table" style="width: 98%;margin-left: 10px;margin-right: 10px">
+        	<div id="unitDiv">
+        		<table id="unitTable" lay-filter="tabletool"></table>
+        	</div>
+        	<div id="deptDiv" style="display : none">
+        		 <table id="deptTable" lay-filter="tabletool"></table>
+        	</div>
+            
+           
+        </div>
+    </div>
+</body>
+
+<script type="text/html" id="unitBar">
+	<a style="color: #33cc78;cursor: pointer" lay-event="addrole">角色管理</a>
+    <a style="color: #33cc78;cursor: pointer" lay-event="detail">查看下级</a>
+	<a style="color: #33cc78;cursor: pointer" lay-event="unitEdit">编辑</a>
+	<a style="color: #33cc78;cursor: pointer" lay-event="unitDel">删除</a>
+</script>
+<script type="text/html" id="deptBar">
+	<a style="color: #33cc78;cursor: pointer" lay-event="addrole">角色管理</a>
+    <a style="color: #33cc78;cursor: pointer;margin-left:10px;" lay-event="edit">编辑</a>
+	<a style="color: #33cc78;cursor: pointer;margin-left:10px;" lay-event="del">删除</a>
+</script>
+<script type="text/html" id="titleTpl">
+{{#if(d.status == true){}}
+<a id="{{d.id}}a" style="cursor: pointer" lay-event="use"><img id="{{d.id}}img" src="resources/images/启用.png"></a>
+{{#}else{}}
+<a id="{{d.id}}a" style="cursor: pointer" lay-event="unuse"><img id="{{d.id}}img" src="resources/images/不启用.png"></a>
+{{#}}}
+</script>
+<script type="text/html" id="count">
+<a style="color: #33cc78;cursor: pointer" lay-event="detailUser">{{d.usercount}}</a>
+</script>
+</html>

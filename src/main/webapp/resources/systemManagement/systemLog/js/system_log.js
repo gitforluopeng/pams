@@ -1,0 +1,81 @@
+layui.use(['form','table','laydate'],function(){
+    var form = layui.form;
+    var table = layui.table;
+    var laydate = layui.laydate;
+    var queryBtn = $('#queryBtn');
+    var resetBtn = $('#resetBtn');
+
+    laydate.render({
+    	elem : '#date'
+    })
+    init();
+    function init(){
+        init_queryBtn();
+        init_resetBtn();
+        init_table();
+    }
+    function init_table(){
+    	loading = layer.load(1, {
+            shade: [0.1,'#fff']
+        });
+        table.render({
+            id: 'reload',
+            elem: '#table',
+            height: 'full-110',
+            method:'post',
+            url: 'systemManagement/load_operation',
+            cellMinWidth: 100,
+            page: true,
+            limits: [5,10,20],
+            cols: [[
+                {field: 'id', title: '编号',align:'center'},
+                {field: 'ip', title: 'IP地址',align:'center'},
+                {field: 'operationUser', title: '用户名', align:'center'},
+                {field: 'userName', title: '用户姓名', align:'center'},
+                {field: 'date', title: '操作时间',align:'center',templet: '#operationtime'},
+                {field: 'operationRecord',width:600, title: '操作记录'}
+            ]],
+            done: function(){
+            	layer.close(loading);
+            }
+        })
+    }
+    function init_queryBtn(){
+        queryBtn.on('click',function(){
+        	var username = $('#check_username').val();
+            var date = $('#date').val();
+            if(username == null && username == '' &&
+            date == null && date == ''){
+                layer.msg('请输入查询条件');
+                return;
+            }
+            loading = layer.load(1, {
+                shade: [0.1,'#fff']
+            });
+            table.reload('reload',{
+                url: 'systemManagement/query_operation',
+                page: {curr: 1},
+                where: {"username" : username,
+                    "date" : date},
+                success: function(){
+                	layer.close(loading);
+                }
+            })
+
+        })
+    }
+    function init_resetBtn(){
+        resetBtn.on('click',function(){
+        	loading = layer.load(1, {
+                shade: [0.1,'#fff']
+            });
+            $('#check_username').val('');
+            $('#date').val('');
+            table.reload('reload',{
+            	url:'systemManagement/load_operation'
+            });
+            layer.close(loading);
+        })
+    }
+
+})

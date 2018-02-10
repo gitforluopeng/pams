@@ -1,0 +1,88 @@
+package pms.com.system.shiro.services.Imp;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.core.MethodParameter;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.support.WebDataBinderFactory;
+import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.method.support.ModelAndViewContainer;
+
+import pms.com.system.shiro.annotate.BeanParam;
+import pms.com.system.shiro.exception.BeanResovleParamterException;
+import pms.com.utils.LoggerUtil;
+
+public class BeanResovleParamter implements HandlerMethodArgumentResolver {
+	
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+	
+	@Override
+	public boolean supportsParameter(MethodParameter parameter) {
+		
+		return parameter.hasParameterAnnotation(BeanParam.class);
+	}
+
+	@Override
+	public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
+			NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+		LoggerUtil.consleLogger.info("[BeanResovleParamter ----> resolveArgument]: class is "+parameter.getParameterType().getName());
+		Object object = BeanUtils.instantiate(parameter.getParameterType());
+		Field[] fields =  object.getClass().getDeclaredFields();
+		Map<String, Field> fieldMap = new HashMap<String, Field>();
+		for(int j = 0; j < fields.length; j++){
+			fieldMap.put(fields[j].getName(), fields[j]);
+		}
+		
+		Method[] methods = object.getClass().getMethods();
+		Map<String, Method> mapMethod = new HashMap<String, Method>();
+		for(Method method: methods){
+			mapMethod.put(method.getName(), method);
+		}
+		
+		String clazzName = object.getClass().getSimpleName();
+		clazzName = clazzName.substring(0,1).toLowerCase() + clazzName.substring(1,clazzName.length());
+		for(int i = 0; i < fields.length; i++){
+			String fieldName = fields[i].getName();
+			String fieldTypeName = fields[i].getType().getName();
+			String value = webRequest.getParameter(clazzName+"."+fieldName);
+			
+			if(!StringUtils.isEmpty(value)){
+				Object objValue = null;
+				if(fieldTypeName.equals(Date.class.getName())){
+					objValue = dateFormat.parse(value);
+				}else if(fieldTypeName.equals(Double.class.getName())){
+					objValue = Double.parseDouble(value);
+				}else if(fieldTypeName.equals(Float.class.getName())){
+					objValue = Float.class.getName();
+				}else if(fieldTypeName.equals(Integer.class.getName())){
+					objValue = Integer.parseInt(value);
+				}else if(fieldTypeName.equals(Long.class.getName())){
+					objValue = Long.parseLong(value);
+				}else if(fieldTypeName.equals(Boolean.class.getName())){
+					objValue = Boolean.parseBoolean(value);
+				}else if(fieldTypeName.equals(String.class.getName())){
+					objValue = value;
+				}else {
+					throw new BeanResovleParamterException("不支持的转化类型："
+							+ "目前只支持 Date, Double, Float, Integer, Long, Boolean, String");
+				}
+				String methodName = fields[i].getName();
+				methodName = "set"+methodName.substring(0,1).toUpperCase() + methodName.substring(1,methodName.length());
+				Method method = mapMethod.get(methodName);
+				if(method == null) continue;
+				method.invoke(object, objValue);
+			}
+			
+		}
+		
+		return object;
+	}
+
+}

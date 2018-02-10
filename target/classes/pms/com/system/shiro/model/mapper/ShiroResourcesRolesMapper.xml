@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pms.com.system.shiro.model.DAO.ShiroResourcesRolesDao">
+    <insert id="addResouceRole" parameterType="pms.com.system.shiro.model.ShiroResourcesRoles" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into shiro_resources_roles (shiro_resources_id,shiro_role_id) values 
+        (#{shiroResourcesId},#{shiroRroleId})
+    </insert>
+    <delete id="deleteResouceRole" parameterType="pms.com.system.shiro.model.ShiroResourcesRoles">
+        delete from shiro_resources_roles where shiro_resources_id=#{shiroResourcesId} and shiro_role_id=#{shiroRroleId}
+    </delete>
+    <select id="getShiroResourcesRolesByRoleId" parameterType="pms.com.system.shiro.model.ShiroResourcesRoles" resultMap="shirorr">
+        select * from shiro_resources_roles where shiro_role_id=#{shiroRroleId} and shiro_resources_id=#{shiroResourcesId}
+    </select>
+    <resultMap type="pms.com.system.shiro.model.ShiroResourcesRoles" id="shirorr">
+        <id column="id" property="id"></id>
+        <result column="shiro_resources_id" property="shiroResourcesId"/>
+        <result column="shiro_role_id" property="shiroRroleId"/>
+    </resultMap>
+</mapper>

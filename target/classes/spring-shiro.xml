@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<!-- 缓存管理器 使用Ehcache实现 -->
+    <bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+        <property name="cacheManagerConfigFile" value="classpath:ehcache.xml"/>
+    </bean>
+    
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="realm" ref="userRealm" />
+		<property name="cacheManager" ref="cacheManager" />
+	</bean>
+   
+    <!-- 获取用户的信息,判断是否拥有用户，创建用户AuthenticationInfo对像-->
+    <bean id="userRealm" class="pms.com.system.shiro.UserRealm">
+    </bean>
+   
+    <bean id="filterChainDefinitionsServices" class="pms.com.system.shiro.services.Imp.FilterChainDefinitionsServiceImp">
+    	<property name="ehcacheCacheName" value="shiroRoles"/>
+    	<property name="shiroResourcesCacheName" value="shiroUserResoucesCache"/>
+    	<property name="definitions">
+			<value>
+			   /resources/** = anon
+			   /loging = anon
+			   /login_view = anon
+			   /backstage/login/** = anon
+			   /backstage/** = backstageFilter
+			   /** = userIsLoginFilter
+			</value>
+		</property>
+    </bean>
+    
+    <bean id="backstageIsLoginFilter" class="pms.com.system.shiro.filter.BackstageIsLoginFilter">
+    	<property name="backstageLoginUrl" value="/backstage/login/login_view"/>
+    	<property name="backstageSuccessUrl" value="/backstage/home"/>
+    	<property name="backstageRoleErrorUrl" value="/error/auth_error"></property>
+    	<property name="role" value="admin"/>
+    </bean>
+    
+    <bean id="userIsLoginFilter" class="pms.com.system.shiro.filter.IsLoginFilter">
+    	<property name="backstageLoginUrl" value="/login_view"/>
+    	<property name="backstageSuccessUrl" value="/home"/>
+    	<property name="backstageRoleErrorUrl" value="/error/auth_error"></property>
+    </bean>
+    
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="securityManager" ref="securityManager" />
+		<property name="loginUrl" value="/login_view" />
+		<property name="successUrl" value="/home" />
+		<property name="filters">
+			<map>
+				<entry key="backstageFilter" value-ref="backstageIsLoginFilter"/>
+				<entry key="userIsLoginFilter" value-ref="userIsLoginFilter"/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+	
+	<bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+    	<property name="securityManager" ref="securityManager"/>
+	</bean>
+	
+</beans>

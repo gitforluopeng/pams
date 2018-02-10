@@ -1,0 +1,68 @@
+﻿<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%
+String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<base href="<%=basePath%>">
+    <meta charset="UTF-8">
+    <title>系统操作日志</title>
+    <script src="resources/layui/layui.js"></script>
+    <link rel="stylesheet" href="resources/layui/css/layui.css">
+    <link rel="stylesheet" href="resources/systemManagement/systemLog/css/system_log.css">
+    <script src="resources/jquery-3.2.1.min.js"></script>
+    <script src="resources/systemManagement/systemLog/js/system_log.js"></script>
+    
+</head>
+<body>
+<div style="width:100%;height: 98%;border-bottom: solid 1px silver;margin: 0px auto;" class="layui-form">
+    <div id="div-toolbar" style="width: 100%;height: 60px;background-color: #DFEFEF">
+        <div class="layui-inline" style="margin-top: 10px;margin-left:20px;">输入搜索:
+            <div style="margin-left: 10px;" class="layui-inline">
+                <input id="check_username" placeholder="请输入用户名称" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline" style="margin-left: 10%;margin-top: 10px">操作日期:
+            <div style="margin-left: 10px;" class="layui-inline">
+               <input id="date" type="text" placeholder="请选择时间" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline" style="margin-left: 5%;margin-top: 10px">
+        <button id="queryBtn" class="layui-btn layui-btn-normal">查询</button>
+        <button id="resetBtn" class="layui-btn layui-btn-normal">重置</button>
+    </div>
+</div>
+<div id="div-table" style="width: 98%;margin-left: 10px;margin-right: 10px">
+    <table id="table"></table>
+</div>
+</div>
+</body>
+<script type="text/javascript">
+	Date.prototype.Format = function (fmt) { //author: meizz 
+	    var o = {
+	        "M+": this.getMonth() + 1, //月份 
+	        "d+": this.getDate(), //日 
+	        "h+": this.getHours(), //小时 
+	        "m+": this.getMinutes(), //分 
+	        "s+": this.getSeconds(), //秒 
+	        "q+": Math.floor((this.getMonth() + 3) / 3), //季度 
+	        "S": this.getMilliseconds() //毫秒 
+	    };
+	    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+	    for (var k in o)
+	    if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+	    return fmt;
+	}
+</script>
+<script type="text/html" id="operationtime">
+	{{# 
+		var date = new Date(d.operationDate);
+		date.Format = Date.prototype.Format;
+		d.time = date.Format('yyyy-MM-dd hh:mm:ss');
+	}}
+	{{d.time}}
+</script>
+</html>

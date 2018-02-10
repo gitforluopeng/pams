@@ -1,0 +1,257 @@
+layui.use(['table','form','laydate','layer'], function(){
+
+	var $ = layui.$;
+	var table = layui.table;
+	var form = layui.form;
+	var laydate = layui.laydate;
+	var layer = layui.layer;
+	var homeYear = $('#home_year');
+	var caseChart = null;
+	var overCaseSumLable = $('#overCaseSumLable');
+	var onCaseSumLable = $("#onCaseSumLable");
+
+	init();
+
+	function init() {
+		init_gsPeopleTable();
+		init_gsCase("");
+		init_caseChart('home/case_data_charts');
+		onClickCheck();
+		init_homeYear(function (value){
+			caseChart.updateView({year:value.replace('年',"")});
+		});
+		init_detail();
+	}
+
+	/**
+	 * 排名表格方法
+	 * url:为数据接口地址
+	 * 返回数据格式为    [{name:"",rnaking:"",score:""},{name:"",rnaking:"",score:""}]
+	 */
+	function init_gsPeopleTable() {
+		var option = {
+				elem: '#per_Ass_table'
+				,height:420
+				,width:743
+				,page: false 
+				,limit:10
+				, cols: [[
+			          {field: 'person_name', title: '姓名', fixed: 'left', align: "center",width:241, unresize: true}
+			          , {field: 'rnaking', title: '名次', align: "center",width:240, unresize: true}
+			          , {field: 'grade', title: '得分', sort: true, align: "center",width:241, unresize: true}
+				]]
+		};
+		$.ajax({
+			url: 'home/case_grade_for_hundred',
+			success: function (data){
+				for(var i = 0; i < data.length; i++){
+					data[i].rnaking = "第 "+(i+1)+" 名";
+				}
+				option.data = data;
+				table.render(option);
+			}
+		})
+		
+	}
+
+	/**
+	 * 案件详情数据方法
+	 * url：为数据接口
+	 * 返回数据格式[
+	 *      {title_of_a_cause:"912盗窃大案",publicProsecutor:"李四",site:"青羊区法院205",state:"已结审结",time:"2017-09-12_2017-09-16",particulars:""},
+	 *      {title_of_a_cause:"912盗窃大案",publicProsecutor:"李四",site:"青羊区法院205",state:"已结审结",time:"2017-09-12_2017-09-16",particulars:""}
+	 * ]
+	 */
+	function init_gsCase(url) {
+		table.render({
+			elem: '#case_table'
+				,height: 315
+				,width:1890
+				,url: 'home/case_table_data'
+					,page: true //开启分页
+					,cols: [[ //表头
+					          {field: 'caseName',title: '案件名称',align:"center", unresize: true}
+					          ,{field: 'prosecutor', title: '公诉人',align:"center", unresize: true}
+					          ,{field: 'unitName', title: '庭审地点', align:"center", unresize: true,templet: '#courtAddress'}
+					          , {field: 'state', title: '案件状态',align:"center", templet: '#titleTpl', unresize: true}
+					          ,{field: 'courtDate', title: '庭审日期',align:"center", unresize: true}
+					          ,{field: 'caseWhy', title: '案件详情',align:"center", toolbar: '#view', unresize: true}
+					          ]]
+		});
+	}
+
+	function init_homeYear(done){
+
+		laydate.render({
+			elem: '#home_year',
+			type: 'year',
+			width: '50px',
+			value: new Date().getFullYear()+"年",
+			format: 'yyyy年',
+			done: done
+		});
+
+	}
+
+	/**
+	 * 统计图的加载
+	 * url: 返回参数为{overCase:[], noCase: []} overCase为12个月为结审案件数
+	 * noCase为没结审案件数
+	 */
+	function init_caseChart(url) {
+
+		caseChart = echarts.init(document.getElementById('bar_Chart'));
+		var option = {
+				backgroundColor: 'white',
+				grid: [
+				       {x: '0%', y: '20%', width: '100%', height: '60%'}
+				       ],
+				       title : {
+				    	   text: ' 案 件 统 计 图',
+				    	   x: 'center',
+				       },
+				       tooltip : {
+				    	   trigger: 'axis'
+				       },
+				       legend: {
+				    	   top:276,
+				    	   data:['已审结','未审结']
+				       },
+				       toolbox: {
+				    	   show : true,
+				       },
+				       calculable : true,
+				       xAxis : [
+				                {
+				                	type : 'category',
+				                	data : ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
+				                	axisTick: {
+				                		show: false
+				                	}
+				                }
+				                ],
+				                yAxis : [
+				                         {
+				                        	 type : 'value',
+				                        	 show:true,  
+				                        	 splitLine:{  
+				                        		 show:true  
+				                        	 },
+				                        	 axisLine: {
+				                        		 show: false
+				                        	 },
+				                        	 axisLabel : {
+				                        		 formatter: function(){
+				                        			 return "";
+				                        		 }
+				                        	 }
+				                         }
+				                         ],
+				                         series : [
+				                                   {
+				                                	   name:'已审结',
+				                                	   type:'bar',
+				                                	   barWidth : 18,
+				                                	   itemStyle: {
+				                                		   normal: {
+				                                			   barBorderRadius: [55, 55, 0, 0],
+				                                			   color: '#69E2C0'
+				                                		   }
+				                                	   }
+				                                   },
+				                                   {
+				                                	   name:'未审结',
+				                                	   type:'bar',
+				                                	   barWidth : 18,
+				                                	   barGap: '0%',
+				                                	   itemStyle: {
+				                                		   normal: {
+				                                			   barBorderRadius: [50, 50, 0, 0],
+				                                			   color: '#909ef7'
+				                                		   }
+				                                	   }
+				                                   }
+				                                   ]
+		};
+
+		caseChart.updateView = function (data) {
+			$.ajax({
+				url: url,
+				type: 'POST',
+				data: data,
+				success: function (data) {
+					if (data == null
+							|| data.overCase == null
+							|| data.noCase == null) {
+						layer.msg("加载错误");
+						return
+					}
+					var overCase = data.overCase;
+					var noCase = data.noCase;
+					var overCaseSum = 0;
+					var noCaseSum = 0;
+					for(var i = 0; i < overCase.length; i++){
+						overCaseSum += overCase[i];
+						noCaseSum += noCase[i];
+					}
+					overCaseSumLable.html(overCaseSum);
+					onCaseSumLable.html(noCaseSum);
+					option.series[0].data = overCase;
+					option.series[1].data = noCase;
+					caseChart.setOption(option, true);
+				},
+				error: function (error) {
+					console.info(error);
+					layer.msg("加载错误");
+				}
+			})
+		}
+
+		caseChart.updateView({year: (new Date()).getFullYear()});
+	}
+
+	function init_sum() {
+
+	}
+
+	/**
+	 * 更新数据
+	 * @param data
+	 */
+	function updateView(data){
+		setOption("ture");
+	}
+	function onClickCheck() {
+		table.on("tool(demo)",function (obj) {
+			
+		})
+	}
+	
+	function init_detail() {
+		table.on('tool(caseTable)', function(obj){
+			var eventType = obj.event;
+			var data = obj.data;
+			if(eventType == 'detail'){
+				parent.layer.open({
+					type: 2,
+					title: '查看庭审基础信息',
+					content: "caseinfo/caseInformation/initCaseInformationSes?id="+data.caseInformationId,
+					area: ['1400px', '98%'],
+					yes: function(index) {
+						
+					},
+					full: function(elem) {
+					}
+				});
+			}
+		})
+		/*$('#detailBtn').on('click',function () {
+			
+		})*/
+	}
+
+});
+
+
+
+

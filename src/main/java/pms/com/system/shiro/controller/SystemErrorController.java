@@ -1,0 +1,15 @@
+package pms.com.system.shiro.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@RequestMapping("/error")
+public class SystemErrorController {
+	
+	@RequestMapping("/auth_error")
+	public String authrErrorView(){
+		return "authError.jsp";
+	}
+	
+}

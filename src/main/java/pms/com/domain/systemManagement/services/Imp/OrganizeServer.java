@@ -1,0 +1,405 @@
+package pms.com.domain.systemManagement.services.Imp;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.springframework.stereotype.Service;
+
+import pms.com.domain.systemManagement.model.OrganizeManagement;
+import pms.com.domain.systemManagement.model.SystemUser;
+import pms.com.domain.systemManagement.model.DAO.OrganizeDao;
+import pms.com.domain.systemManagement.model.DAO.SystemUserDao;
+import pms.com.domain.systemManagement.services.OrganizeServiceInter;
+import pms.com.system.shiro.model.ShiroUser;
+import pms.com.system.shiro.model.DAO.ShiroUserDao;
+@Service
+public class OrganizeServer implements OrganizeServiceInter  {
+
+	@Resource
+	private SqlSessionFactory sessionFactory;
+
+	@Override
+	public List<OrganizeManagement> getAllUnit(Integer pageIndex, Integer pageSize) {
+		SqlSession session = sessionFactory.openSession();
+		OrganizeDao organizeDao = session.getMapper(OrganizeDao.class);
+		List<OrganizeManagement> organizeManagements = organizeDao.getAllUnit(pageIndex*pageSize, pageSize);
+		session.close();
+		return organizeManagements;
+	}
+
+	@Override
+	public int getDeptCountByUnitId(Long unitId) {
+		SqlSession session = sessionFactory.openSession();
+		OrganizeDao organizeDao = session.getMapper(OrganizeDao.class);
+		int count = organizeDao.getDeptCountByUnitId(unitId);
+		session.close();
+		return count;
+	}
+
+	@Override
+	public int getUnitCount() {
+		SqlSession session = sessionFactory.openSession();
+		OrganizeDao organizeDao = session.getMapper(OrganizeDao.class);
+		int count = organizeDao.getUnitCount();
+		session.close();
+		return count;
+	}
+
+	@Override
+	public boolean updateStatus(Long id, boolean status) {
+		SqlSession session = sessionFactory.openSession();
+		OrganizeDao organizeDao = session.getMapper(OrganizeDao.class);
+		boolean result = false;
+		try{
+			organizeDao.updateStatus(id, status);
+			if(0 == organizeDao.getTypeById(id)){
+				organizeDao.setDeptsByParentId(id, status);
+			}
+			session.commit();
+			result = true;
+		}catch(Exception e){
+			e.printStackTrace();
+			session.rollback();
+		}finally {
+			session.close();
+		}
+		return result;
+	}
+
+	@Override
+	public List<OrganizeManagement> getAllDeptByUnitId(Long unitId, Integer pageIndex, Integer pageSize) {
+		SqlSession session = sessionFactory.openSession();
+		OrganizeDao organizeDao = session.getMapper(OrganizeDao.class);
+		List<OrganizeManagement> organizeManagements =
+				organizeDao.getAllDept(unitId, pageIndex*pageSize, pageSize);
+		session.close();
+		return organizeManagements;
+	}
+
+	@Override
+	public int getUsercountByDeptId(Long deptId) {
+		SqlSession session = sessionFactory.openSession();
+		OrganizeDao organizeDao = session.getMapper(OrganizeDao.class);
+		int count = organizeDao.getUsercountByDeptId(deptId);
+		session.close();
+		return count;
+	}
+
+	@Override
+	public int deleteDeptByDeptId(Long deptId) {
+		SqlSession session = sessionFactory.openSession();
+		OrganizeDao organizeDao = session.getMapper(OrganizeDao.class);
+		int result = 0;
+		if(organizeDao.getUsercountByDeptId(deptId)== 0){
+			try{
+				organizeDao.delGroupRolesByDeptId(deptId);
+				organizeDao.delGroupByDeptId(deptId);
+				session.commit();
+				result = 1;
+			}catch(Exception e){
+				e.printStackTrace();
+				session.rollback();
+			}finally {
+				session.close();
+			}
+		}else{
+			result = 2;
+		}
+		return result;
+	}
+
+	@Override
+	public List<ShiroUser> getShiroUsersByDeptId(Long deptId, Integer pageIndex, Integer pageSize) {
+		SqlSession session = sessionFactory.openSession();
+		ShiroUserDao shiroUserDao = session.getMapper(ShiroUserDao.class);
+		List<ShiroUser> shiroUsers = shiroUserDao.getShiroUserById(deptId, pageIndex*pageSize, pageSize);
+		session.close();
+		return shiroUsers;
+	}
+
+	@Override
+	public SystemUser getSystemUserByShiroUserId(Long shiroUserId) {
+		SqlSession session = sessionFactory.openSession();
+		SystemUserDao systemUserDao = session.getMapper(SystemUserDao.class);
+		SystemUser systemUser = systemUserDao.getSystemUserByShiroUserId(shiroUserId);
+		session.close();
+		return systemUser;
+	}
+
+	@Override
+	public int insertDept(OrganizeManagement organizeManagement,Long unitId) {
+		SqlSession session = sessionFactory.openSession();
+		OrganizeDao organizeDao = session.getMapper(OrganizeDao.class);
+		int resule = 0;
+		String insertDeptName = organizeManagement.getName();
+		if(organizeDao.isRepeatDeptName(unitId, insertDeptName) == 0){
+			try{
+				organizeDao.insertDept(organizeManagement);
+				session.commit();
+				resule = 1;
+			}catch(Exception e){
+				session.rollback();
+			}finally {
+				session.close();
+			}
+		}else{
+			resule = 2;
+		}
+		return resule;
+	}
+
+	@Override
+	public OrganizeManagement getManagementById(Long id) {
+		SqlSession session = sessionFactory.openSession();
+		OrganizeDao organizeDao = session.getMapper(OrganizeDao.class);
+		List<OrganizeManagement> list = organizeDao.getManagementById(id);
+		session.close();
+		OrganizeManagement organizeManagement = new OrganizeManagement();
+		if(!list.isEmpty()){
+			organizeManagement = list.get(0);
+		}
+		return organizeManagement;
+	}
+
+	@Override
+	public String getUnitNameByParentId(Long parentId) {
+		SqlSession session = sessionFactory.openSession();
+		OrganizeDao organizeDao = session.getMapper(OrganizeDao.class);
+		String unitName = organizeDao.getUnitNameByparentId(parentId);
+		session.close();		
+		return unitName;
+	}
+
+	@Override
+	public int updateDept(String deptName, String remarks, Long deptId,String modfiyPeople,Date modfiyDate) {
+		SqlSession session = sessionFactory.openSession();
+		OrganizeDao organizeDao = session.getMapper(OrganizeDao.class);
+		int result = 0;
+		try{
+			result = organizeDao.updateDept(deptName, remarks, deptId,modfiyPeople,modfiyDate);
+			session.commit();
+			result = 1;
+		}catch(Exception e){
+			e.printStackTrace();
+			session.rollback();
+		}finally {
+			session.close();
+		}
+		return result;
+	}
+
+	@Override
+	public int getTypeById(Long id) {
+		SqlSession session = sessionFactory.openSession();
+		OrganizeDao organizeDao = session.getMapper(OrganizeDao.class);
+		int result = organizeDao.getTypeById(id);
+		session.close();
+		return result;
+	}
+
+	@Override
+	public List<String> getAllRoles() {
+		SqlSession session = sessionFactory.openSession();
+		OrganizeDao organizeDao = session.getMapper(OrganizeDao.class);
+		List<String> list = organizeDao.getAllRoles();
+		session.close();
+		return list;
+	}
+
+	@Override
+	public List<String> getOrganizeRoles(Long id,Integer page, Integer limit) {
+		SqlSession session = sessionFactory.openSession();
+		OrganizeDao organizeDao = session.getMapper(OrganizeDao.class);
+		List<String> list = organizeDao.getRolesByOrganizeId(id,page*limit,limit);
+		session.close();
+		return list;
+	}
+
+	@Override
+	public int getCountForOrganizeRole(Long id) {
+		SqlSession session = sessionFactory.openSession();
+		OrganizeDao organizeDao = session.getMapper(OrganizeDao.class);
+		int count = organizeDao.getCountForOrganizeRole(id);
+		session.close();
+		return count;
+	}
+
+	@Override
+	public List<String> getUnitRolesName(Long unitId) {
+		SqlSession session = sessionFactory.openSession();
+		OrganizeDao organizeDao = session.getMapper(OrganizeDao.class);
+		List<String> list = organizeDao.getRolesByUnitId(unitId);
+		session.close();
+		return list;
+	}
+
+	@Override
+	public int deleteRole(Long groupid,String rolename) {
+		int result = 0;
+		
+		SqlSession session = sessionFactory.openSession();
+		OrganizeDao organizeDao = session.getMapper(OrganizeDao.class);
+		if(groupid != 0  || rolename != null || rolename !=""){
+			int type = organizeDao.getTypeById(groupid);
+			System.out.println(type+"组织机构id"+groupid);
+			if(type == 0){				//单位
+				List<OrganizeManagement> organizeManagements = 
+						organizeDao.getAllDeptByUnitIdList(groupid);		//获取所有部门
+				List<Long> deptIds = new ArrayList<Long>();
+				for (int i = 0; i < organizeManagements.size(); i++) {		//获取所有部门id
+					deptIds.add(organizeManagements.get(i).getId());
+				}
+				for (int i = 0; i < deptIds.size(); i++) {
+					List<String> rolesList = organizeDao.getRolesByUnitId(deptIds.get(i));
+					for (int j = 0; j < rolesList.size(); j++) {
+						if(rolename.equals(rolesList.get(j))){
+							result = 2;
+							return result;
+						}
+					}
+				}
+				try{
+					if(organizeDao.deleteRole(groupid, rolename) > 0){
+						result = 1;
+					}
+					session.commit();
+				}catch(Exception e){
+					e.printStackTrace();
+					session.rollback();
+				}finally {
+					session.close();
+				}
+			}else if(1 == type){							//部门
+				List<Long> userIds = organizeDao.getUserIdByDeptId(groupid);
+				for (int i = 0; i < userIds.size(); i++) {
+					if(rolename.equals(organizeDao.getUserRoleName(userIds.get(i)))){
+						result = 2;
+						return result;
+					}
+				}
+				try{
+					if(organizeDao.deleteRole(groupid, rolename) > 0){
+						result = 1;
+					}
+					session.commit();
+				}catch(Exception e){
+					e.printStackTrace();
+					session.rollback();
+				}finally {
+					session.close();
+				}
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public int insertRole(Long groupId, String roleName) {
+		int result = 0;
+		SqlSession session = sessionFactory.openSession();
+		OrganizeDao organizeDao = session.getMapper(OrganizeDao.class);
+		List<String> list = organizeDao.getRolesByUnitId(groupId);
+		for (int i = 0; i < list.size(); i++) {
+			if(roleName.equals(list.get(i))){
+				return 2;
+			}
+		}
+		try{
+			result = organizeDao.insertRole(groupId, organizeDao.getRoleId(roleName));
+			session.commit();
+		}catch(Exception e){
+			e.printStackTrace();
+			session.rollback();
+		}finally {
+			session.close();
+		}
+		return result;
+	}
+
+	@Override
+	public List<String> getDeptNameByUnitId(Long unitId) {
+		SqlSession session = sessionFactory.openSession();
+		OrganizeDao organizeDao = session.getMapper(OrganizeDao.class);
+		List<String> list = organizeDao.getDeptNameByUnitId(unitId);
+		session.close();
+		return list;
+	}
+
+	@Override
+	public int insertUnit(OrganizeManagement organizeManagement) {
+		int result = 0;
+		SqlSession session = sessionFactory.openSession();
+		OrganizeDao organizeDao = session.getMapper(OrganizeDao.class);
+		try{
+			if(organizeDao.getCountByUnitName(organizeManagement.getName()) == 0) {
+				organizeDao.insertDept(organizeManagement);
+				result = 1;
+				session.commit();
+			} else {
+				result = 2;
+			}
+			
+		}catch(Exception  e){
+			e.printStackTrace();
+			session.rollback();
+		}finally {
+			session.close();
+		}
+		return result;
+	}
+
+	@Override
+	public int updateUnit(Long id, String unitName, String res,String modfiyPeople,Date modfiyDate) {
+		SqlSession session = sessionFactory.openSession();
+		OrganizeDao organizeDao = session.getMapper(OrganizeDao.class);
+		int result = 0;
+		try{
+			result = organizeDao.updateUnit(unitName, res, id, modfiyPeople, modfiyDate);
+			session.commit();
+			result = 1;
+		}catch(Exception e){
+			e.printStackTrace();
+			session.rollback();
+		}finally {
+			session.close();
+		}
+		return result;
+	}
+
+	@Override
+	public List<OrganizeManagement> getAllUnit() {
+		SqlSession session = sessionFactory.openSession();
+		OrganizeDao organizeDao = session.getMapper(OrganizeDao.class);
+		List<OrganizeManagement> organizeManagements = organizeDao.getAllUnitNopage();
+		session.close();
+		return organizeManagements;
+	}
+
+	@Override
+	public int delUnit(Long unitId) {
+		int result = 0;
+		SqlSession session = sessionFactory.openSession();
+		OrganizeDao organizeDao = session.getMapper(OrganizeDao.class);
+		if(organizeDao.getAllDeptByUnitIdList(unitId).size() == 0){
+			try{
+				organizeDao.delGroupRolesByDeptId(unitId);
+				organizeDao.delGroupByDeptId(unitId);
+				result = 1;
+				session.commit();
+			}catch(Exception e){
+				e.printStackTrace();
+				session.rollback();
+			}finally {
+				session.close();
+			}
+		} else {
+			result = 2;
+		}
+		return result;
+	}
+}

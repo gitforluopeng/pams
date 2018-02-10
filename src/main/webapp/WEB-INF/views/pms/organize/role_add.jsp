@@ -1,0 +1,181 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%
+String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+
+﻿<!DOCTYPE html>
+<html lang="en" style="overflow-x: hidden; overflow-y: hidden;">
+<head>
+	<base href="<%=basePath%>">
+    <meta charset="UTF-8">
+    <title>新增用户角色类型</title>
+    <script src="resources/layui/layui.js"></script>
+    <link rel="stylesheet" href="resources/layui/css/layui.css">
+    <script src="resources/jquery-3.2.1.min.js"></script>
+</head>
+<body>
+<div id="div_all" class="layui-form" lay-filter="selectdiv" style="margin-top: 20px;">
+    <div>
+        <div class="layui-inline" style="margin-left: 20px;">角色类型:</div>
+        <div class="layui-inline" style="margin-left: 10px;width: 150px;">
+            <select id="select" class="layui-select">
+                <option value="">请选择角色类型</option>
+            </select>
+        </div>
+        <div class="layui-inline" style="margin-left: 20px">
+            <button id="addBtn" class="layui-btn layui-btn-normal">新增</button>
+        </div>
+    </div>
+    <div style="margin-top: 20px;">
+        <div>
+            <table id="table" lay-filter="tabletool"></table>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="roleboor">
+	<a style="color: #33cc78;cursor: pointer;margin-left:10px;" lay-event="del">删除</a>
+</script>
+<script>
+    layui.use(['form','table'],function(){
+        var form = layui.form;
+        var table = layui.table;
+        var addBtn = $("#addBtn");
+        var organizeId = window.parent.document.id;
+
+        init();
+        function init(){
+        	console.info(organizeId);
+            init_table();
+            init_reload_table();
+            init_select();
+            init_addBtn();
+            init_toolsclick();
+        }
+        
+        function init_toolsclick(){
+        	 table.on('tool(tabletool)',function(obj){
+        		 var data = obj.data;
+                 var layEvent = obj.event;
+                 if(layEvent == "del"){
+                	 layer.confirm('是否删除数据', function(index) {
+                		 loading = layer.load(1, {
+                             shade: [0.1,'#fff']
+                         });
+                		 $.ajax({
+                			 type : "post",
+                             async : true,
+                             url : "systemManagement/delete_role",
+                             data : {"groupid" : organizeId,"rolename" : data.rolename},
+                             success : function (data){
+                            	 if(1 == data){
+                            		 layer.msg("删除成功!",{icon : 1});
+                                     obj.del();
+                            	 }else if(2 == data){
+                                     layer.msg("删除失败!该组织下级已有此用户角色类型!",{icon : 2});
+                                 }else{
+                                     layer.msg("删除失败!请稍后再试!",{icon : 2});
+                                 }
+                             },
+                             error : function (){
+                            	 layer.msg("删除失败!请稍后再试!",{icon : 2});
+                             }
+                		 })
+                		 layer.close(loading);
+                	 })
+                	 
+                 }
+        	 })
+        }
+        function init_addBtn(){
+            addBtn.on('click',function(){
+                var roleName = $("#select").val();
+                if(roleName =="" || roleName == null){
+                    layer.msg("请先选择用户角色类型!",{icon:2});
+                    return;
+                }
+                loading = layer.load(1, {
+                    shade: [0.1,'#fff']
+                });
+                $.ajax({
+                    type : "post",
+                    async : true,
+                    url : "systemManagement/insert_role",
+                    data : {"id" : organizeId,"rolename" : roleName},
+                    success : function(data){
+                        if(1 == data){
+                            layer.msg("新增成功!",{icon : 1});
+                                table.reload("reload");
+                        }else if(0 == data){
+                            layer.msg("新增失败!请稍后再试!",{icon : 2});
+                        }else if(2 ==data){
+                        	layer.msg("新增失败!该组织已有此角色!",{icon : 2});
+                        }
+                    },
+                    error : function(){
+                        layer.msg("新增失败!请稍后再试!",{icon : 2});
+                    }
+                })
+                layer.close(loading);
+            })
+        }
+
+        function init_select(){
+            $.ajax({
+                type : "get",
+                async : true,
+                url : "systemManagement/load_roles",
+                data: {"id" : organizeId},
+                success : function(data) {
+                    if(data==""||data==null||data==undefined){
+                        return;
+                    }
+                    var obj = $('#select');
+                    for(var i = 0;i < data.length; i++)
+                    {
+                        var rolename=data[i];
+                        var option = $('<option></option>');
+                        option.attr("value",rolename);
+                        option.html(rolename);
+                        obj.append(option);
+                    }
+                    form.render('select', 'selectdiv');
+                },
+                error: function(){
+                    layer.msg('啊喔，数据载入出现异常了，请刷新页面试试',{icon:5});
+                }
+            });
+        }
+
+        function init_table(){
+        
+            table.render({
+                elem : "#table",
+                id : "reload",
+                mothed : "get",
+                url : '',
+                cellMinWidth: 80,
+                height : 'full-110',
+                page: true,
+                limit: 5,
+                cols : [[
+                    {field : "rolename",align:'center',title : "已有用户角色类型"},
+                    {title: '操作', align:'center', field: 'right', toolbar: '#roleboor'}
+                ]]
+            })
+        }
+        function init_reload_table(){
+        loading = layer.load(1, {
+                    shade: [0.1,'#fff']
+                });
+        	table.reload('reload',{
+        		url : "systemManagement/load_organize_roles",
+                where : {"id" : organizeId}
+        	})
+        	layer.close(loading);
+        }
+
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+/**
+ * Created by Luopeng on 2017/12/12.
+ */
+
+function oprexml($) {
+    var $ = $;
+    /**
+     * 解析document对象
+     * @param xmlDoc
+     * @returns {*}
+     */
+    this.getRespData = function(xmlDoc){
+        var xmlDocument=xmlDoc;
+        var data=null;
+        var sendType=xmlDocument.getElementsByTagName("message")[0].getAttribute("type");
+        var state=xmlDocument.getElementsByTagName("state")[0].childNodes[0].nodeValue;
+        var sendPerson=xmlDocument.getElementsByTagName("sendIdentifier")[0].childNodes[0].nodeValue;
+        var sendPersonName=xmlDocument.getElementsByTagName("sendPersonName")[0].childNodes[0].nodeValue;
+        var receivePerson=xmlDocument.getElementsByTagName("receiveIdentifier")[0].childNodes[0].nodeValue;
+        var sendTime=xmlDocument.getElementsByTagName("time")[0].childNodes[0].nodeValue;
+        var groupId=xmlDocument.getElementsByTagName("groupId")[0].childNodes[0].nodeValue;
+        var datatype=xmlDocument.getElementsByTagName("dataType")[0].childNodes[0].nodeValue;
+        var textdata=xmlDocument.getElementsByTagName("data")[0].childNodes[0].nodeValue;
+        data={'sendType':sendType,'state':state,'sendPerson':sendPerson,'sendPersonName':sendPersonName,'receivePerson':receivePerson,'sendTime':sendTime,'groupId':groupId,'datatype':datatype,'textdata':textdata};
+        return data;
+    }
+
+    /**
+     * 创建XML字符串
+     * @param sendType
+     * @param state
+     * @param sendPerson
+     * @param receivePerson
+     * @param textdata
+     * @param groupId
+     * @param datatype
+     * @returns {string}
+     */
+    this.createTextMessage = function (sendType,state,sendPerson,sendNickName,receivePerson,textdata,groupId,datatype){
+        var date = new Date();
+        var sendTime = date.Format('yyyy-MM-dd hh:mm:ss');
+        date.Format = Date.prototype.Format;
+        var content = '<?xml version="1.0" encoding="UTF-8"?>';
+        content += '<message type="';
+        content += sendType;
+        content += '">';
+        content += '<state>';
+        content += state;
+        content += '</state>';
+        content += '<sendIdentifier>';
+        content += sendPerson;
+        content += '</sendIdentifier>';
+        content += '<sendPersonName>';
+        content += sendNickName;
+        content += '</sendPersonName>';
+        content += '<receiveIdentifier>';
+        content += receivePerson;
+        content += '</receiveIdentifier>';
+        content += '<content>';
+        content += '<time>';
+        content += sendTime;
+        content += '</time>';
+        content += '<groupId>';
+        content += groupId;
+        content += '</groupId>';
+        content += '<dataType>';
+        content += datatype;
+        content += '</dataType>';
+        content += '<data><![CDATA[';
+        content += textdata;
+        content += ']]></data>';
+        content += '</content>';
+        content += '</message>';
+        return content;
+    }
+    
+    this.IMAgreementEncode = function (sendType, state, sendPerson, nickName, receivePerson, contents){
+    	 var date = new Date();
+         var sendTime = date.Format('yyyy-MM-dd hh:mm:ss');
+         date.Format = Date.prototype.Format;
+         var content = '<?xml version="1.0" encoding="UTF-8"?>';
+         content += '<message type="';
+         content += sendType;
+         content += '">';
+         content += '<state>';
+         content += state;
+         content += '</state>';
+         content += '<sendIdentifier>';
+         content += sendPerson;
+         content += '</sendIdentifier>';
+         content += '<sendPersonName>';
+         content += nickName;
+         content += '</sendPersonName>';
+         content += '<receiveIdentifier>';
+         content += receivePerson;
+         content += '</receiveIdentifier>';
+         content += '<content>';
+         content += '<time>'+new Date().Format("yyyy-MM-dd hh:mm:ss")+'</time>'
+         for(key in contents){
+        	 content += "<"+key+"><![CDATA["+contents[key]+"]]>"+"</"+key+">";
+         }
+         content += '</content>';
+         content += '</message>';
+         content = $.parseXML(content);
+         content.toString = function (){
+         	
+             if (window.ActiveXObject) {       
+               return this.xml;
+             }else {        
+               return (new XMLSerializer()).serializeToString(this);
+             }
+
+         }
+         return content.toString();
+    }
+    
+    this.IMAgreementResovle = function (strMessage){
+    	var imAgreement = $.parseXML(strMessage);
+    	var message = {};
+		var sendType=imAgreement.getElementsByTagName("message")[0].getAttribute("type");
+	    var state=imAgreement.getElementsByTagName("state")[0].childNodes[0].nodeValue;
+	    var sendPerson=imAgreement.getElementsByTagName("sendIdentifier")[0].childNodes[0].nodeValue;
+	    var sendPersonName=imAgreement.getElementsByTagName("sendPersonName")[0].childNodes[0].nodeValue;
+	    var receivePerson=imAgreement.getElementsByTagName("receiveIdentifier")[0].childNodes[0].nodeValue;
+	    var contents = imAgreement.getElementsByTagName("content")[0].childNodes;
+	    message = {'sendType':sendType,'state':state,'sendPerson':sendPerson,'sendPersonName':sendPersonName,'receivePerson':receivePerson};
+	    var contentData = {};
+	    for(var i = 0; i < contents.length; i++){
+	    	var content = contents[i];
+	    	contentData[content.nodeName] = content.textContent;
+	    }
+	    message.content = contentData;
+	    return message;
+    }
+    /**
+     * 解析XML字符串，得到Dcument对象
+     * @param text 解析数据
+     * @returns {*}
+     */
+    this.createDocument = function (text) {
+        var xmlDoc = null;
+        try //Internet Explorer
+        {
+            xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+            xmlDoc.async = "false";
+            xmlDoc.loadXML(text);
+        }
+        catch (e) {
+            try //Firefox, Mozilla, Opera, etc.
+            {
+                parser = new DOMParser();
+                xmlDoc = parser.parseFromString(text, "text/xml");
+            }
+            catch (e) {
+            }
+        }
+        
+        xmlDoc.toString = function (){
+        	
+            if (window.ActiveXObject) {       
+              return this.xml;
+            }else {        
+              return (new XMLSerializer()).serializeToString(this);
+            }
+
+        }
+        return xmlDoc;
+    }
+
+    this.getExplorer = function () {
+        var explorer = window.navigator.userAgent;
+        //ie
+        if (explorer.indexOf("MSIE") >= 0) {
+            return 'ie';
+        }
+        //firefox
+        else if (explorer.indexOf("Firefox") >= 0) {
+            return 'Firefox';
+        }
+        //Chrome
+        else if (explorer.indexOf("Chrome") >= 0) {
+            return 'Chrome';
+        }
+        //Opera
+        else if (explorer.indexOf("Opera") >= 0) {
+            return 'Opera';
+        }
+        //Safari
+        else if (explorer.indexOf("Safari") >= 0) {
+            return 'Safari';
+        }
+    }
+    Date.prototype.Format = function (fmt) { //author: meizz
+        var o = {
+            "M+": this.getMonth() + 1, //月份
+            "d+": this.getDate(), //日
+            "h+": this.getHours(), //小时
+            "m+": this.getMinutes(), //分
+            "s+": this.getSeconds(), //秒
+            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+            "S": this.getMilliseconds() //毫秒
+        };
+        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    }
+}

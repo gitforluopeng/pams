@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pms.com.system.shiro.model.DAO.ShiroResourceTypeDao">
+	
+	<select id="loadForId">
+		select * from shiro_resource_type where id = #{id}
+	</select>
+	
+	<resultMap type="pms.com.system.shiro.model.ShiroResourcesType" id="shiroResourcesType">
+		<id column="id" property="id"/>
+		<result column="type_name" property="typeName"/>
+	</resultMap>
+	
+</mapper>

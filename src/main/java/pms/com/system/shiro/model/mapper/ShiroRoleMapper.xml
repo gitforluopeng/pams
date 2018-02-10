@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pms.com.system.shiro.model.DAO.ShiroRoleDao">
+	
+	<select id="loadAllShiroRolesForIds" parameterType="java.util.List" resultMap="shiroRole">
+		select * from shiro_role where id in 
+			<foreach collection="list" item="id" open="(" separator="," close=")">
+				#{id}
+			</foreach>
+	</select>
+	
+	<select id="loadAllShiroRoles" resultMap="shiroRole">
+		select * from shiro_role
+	</select>
+	<select id="getAllRoleForPage" resultMap="shiroRole">
+		select * from shiro_role limit #{pageIndex},#{pageSize}
+	</select>
+	<select id="getAllRoleCount" resultType="java.lang.Integer">
+		select count(*) from shiro_role
+	</select>
+	<select id="loadUserRolesForId" resultMap="shiroRole">
+		SELECT
+		*
+		FROM
+		shiro_role sr
+		WHERE
+		sr.id IN (
+			SELECT
+			sur.shiro_role_id
+			FROM
+			shiro_user_roles sur
+			WHERE
+			sur.shiro_user_id = #{id}
+		)
+	</select>
+	<select id="getRoleByName" parameterType="pms.com.system.shiro.model.ShiroRole" resultMap="shiroRole">
+	    select * from shiro_role where name=#{name}
+	</select>
+	<insert id="addRole" parameterType="pms.com.system.shiro.model.ShiroRole" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+	    insert into shiro_role (name) values (#{name})
+	</insert>
+	<delete id="deleteRole" parameterType="pms.com.system.shiro.model.ShiroRole">
+	    delete from shiro_role where id=#{id}
+	</delete>
+	<update id="updateRole" parameterType="pms.com.system.shiro.model.ShiroRole">
+	    update shiro_role set name=#{name} where id=#{id}
+	</update>
+	<update id="updateRoleIsUse" parameterType="pms.com.system.shiro.model.ShiroRole">
+	    update shiro_role set lockStatus=#{lockStatus} where id=#{id}
+	</update>
+	<resultMap type="pms.com.system.shiro.model.ShiroRole" id="shiroRole">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="lockStatus" property="lockStatus"/>
+	</resultMap>
+	
+</mapper>

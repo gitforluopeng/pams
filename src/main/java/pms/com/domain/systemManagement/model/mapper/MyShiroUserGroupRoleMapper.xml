@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="pms.com.domain.systemManagement.model.DAO.MyShiroUserGroupRoleDao">
+     <insert id="addShiroUserGroupRole" parameterType="pms.com.domain.systemManagement.model.MyShiroUserGroupRole" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+         insert into shiro_user_roles (shiro_user_id,shiro_role_id) values 
+         (#{shiroUserId},#{shrioRoleId})
+     </insert>
+     <update id="updateShiroUserGroupRole" parameterType="pms.com.domain.systemManagement.model.MyShiroUserGroupRole">
+         update shiro_user_roles set shiro_role_id=#{shrioRoleId} where id=#{id}
+     </update>
+     <delete id="deleteShiroUserGroupRoleById" parameterType="pms.com.domain.systemManagement.model.MyShiroUserGroupRole">
+	    delete from shiro_user_roles where id=#{id}
+	 </delete>
+     <resultMap type="pms.com.domain.systemManagement.model.MyShiroUserGroupRole" id="myShiroUserGroupRole">
+         <id column="id" property="id"></id>
+         <result column="shiro_user_id" property="shiroUserId"/>
+         <result column="shiro_role_id" property="shrioRoleId"/>
+     </resultMap>
+</mapper>

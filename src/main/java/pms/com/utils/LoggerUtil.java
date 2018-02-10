@@ -1,0 +1,11 @@
+package pms.com.utils;
+
+import org.apache.log4j.Logger;
+
+public class LoggerUtil {
+	
+	public static Logger consleLogger = Logger.getLogger("stdout");
+	public static Logger fileLogger = Logger.getLogger("File");
+	public static Logger loginFileLogger = Logger.getLogger("loginFile");
+		
+}

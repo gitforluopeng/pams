@@ -1,0 +1,71 @@
+package pms.com.domain.systemManagement.model;
+
+import java.io.Serializable;
+import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(value={"handler"})
+public class SystemName implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+	private Long id;//主键id自增长
+	private String name;//系统名称
+	private String createUser;//创建用户
+	private Date createTime;//创建时间
+	private String changeUser;//变更用户
+	private Date changeTime;//变更时间
+	private Boolean isUse;//是否启用
+	
+	public SystemName() {
+		super();
+	}
+	
+	public SystemName(Boolean isUse) {
+		super();
+		this.isUse = isUse;
+	}
+
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getCreateUser() {
+		return createUser;
+	}
+	public void setCreateUser(String createUser) {
+		this.createUser = createUser;
+	}
+	public Date getCreateTime() {
+		return createTime;
+	}
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+	public String getChangeUser() {
+		return changeUser;
+	}
+	public void setChangeUser(String changeUser) {
+		this.changeUser = changeUser;
+	}
+	public Date getChangeTime() {
+		return changeTime;
+	}
+	public void setChangeTime(Date changeTime) {
+		this.changeTime = changeTime;
+	}
+	public Boolean getIsUse() {
+		return isUse;
+	}
+	public void setIsUse(Boolean isUse) {
+		this.isUse = isUse;
+	}
+	
+}

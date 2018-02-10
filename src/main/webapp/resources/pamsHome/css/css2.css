@@ -1,0 +1,108 @@
+.layui-container{
+    width: 1920px;
+    padding: 0 0;!important;
+    padding-left: 30px;!important;
+}
+
+.img_1{
+    width: 545px;
+    height: 150px;
+    background-image:url("../imgs/img-18.png");
+    background-size: 100%;
+}
+.img_2{
+    margin-left: 20px;
+    width: 536px;
+    height: 150px;
+    background-image: url("../imgs/img-19.png");
+}
+.img_3{
+    text-align: center;
+    font-size: 18px;
+    color: #ffffff;
+    width:737px;
+    height:50px;
+    line-height: 50px;
+    background-image: url("../imgs/img-26.png");
+    background-size: 100%;
+}
+.upperPart_left_down{
+    width: 1100px;
+    height: 309px;
+    margin-top: 20px
+}
+.per_Ass_table{
+    width: 739px;
+}
+.layui-table, .layui-table-view{
+  margin: 0 0 ;!important;
+}
+.layui-table-cell{
+    height: 50px;
+    line-height: 50px;
+    margin: 0 ;!important;
+    padding: 0;!important;
+    font-size: 14px;
+    color: #333333;
+}
+.layui-table th{
+    font-size: 14px;
+    color: #999999;
+    background-color: #f9fbfc;
+
+}
+
+
+.layui-col-lg12 .layui-table-cell{
+    height: 40px;
+    line-height: 40px;
+    margin: 0 ;!important;
+    font-size: 14px;
+    color: #333333;
+}
+.layui-col-lg12 .layui-table th{
+    height: 50px;
+    line-height: 50px;
+    font-size: 16px;
+    color: #999999;
+    background-color: #f4f6f7;
+
+}
+.layui-table-page>div{
+    display: flex;!important;
+    justify-content: center;!important;
+}
+.case_table_parent{
+    margin-top: 20px;
+}
+.per_Ass_table_parent{
+    margin-left: 40px;
+}
+.examine{
+    color: #008cef;
+    cursor: pointer;
+}
+.number{
+    font-size: 100px;
+    color: #ffffff;
+    height: 60px;
+}
+.state{
+    margin-top: -100px;
+    display: block;
+    margin-left: 170px;
+    font-size: 24px;
+    color: #ffffff;
+
+}
+.img_1_number{
+    margin-top: 50px;
+    margin-left: 40px;
+    height: 50px;
+    line-height: 50px;
+}
+.select_year{
+    z-index: 100;
+    position: absolute;
+    margin-top: 30px;
+}

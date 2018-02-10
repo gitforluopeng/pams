@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pms.com.system.shiro.model.DAO.ShiroUserDao">
+	
+	<select id="loadForUsername" resultMap="shiroUser">
+		select * from shiro_user where username=#{username}
+	</select>
+	
+	<insert id="addShiroUser" parameterType="pms.com.system.shiro.model.ShiroUser" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+	    insert into shiro_user (username,password,salt,shiro_user_group_id,createTime,updateTime) values (#{username},#{password},#{salt},#{groupId},#{createTime},#{updateTime})
+	</insert>
+	
+	<update id="updateUserIsLock" parameterType="pms.com.system.shiro.model.ShiroUser">
+	    update shiro_user set accountLockStatus=#{accountLockStatus} where id=#{id}
+	</update>
+	
+	<update id="updateShiroUser" parameterType="pms.com.system.shiro.model.ShiroUser">
+	    update shiro_user set username=#{username},password=#{password},salt=#{salt},shiro_user_group_id=#{groupId},updateTime=#{updateTime} where id=#{id}
+	</update>
+	
+	<select id="getShiroUserById" resultMap="shiroUser">
+	    select * from shiro_user where shiro_user_group_id=#{shiroUserGropId} limit #{pageIndex},#{pageSize}
+	</select>
+	
+	<delete id="deleteShiroUserById" parameterType="pms.com.system.shiro.model.ShiroUser">
+	    delete from shiro_user where id=#{id}
+	</delete>
+	
+	<resultMap type="pms.com.system.shiro.model.ShiroUser" id="shiroUser">
+		<id column="id" property="id" javaType="java.lang.Long"/>
+		<result column="username" property="username"/>
+		<result column="password" property="password"/>
+		<result column="accountLockStatus" property="accountLockStatus"/>
+		<result column="salt" property="salt"/>
+		<result column="createTime" property="createTime" javaType="java.util.Date"/>
+		<result column="updateTime" property="updateTime" javaType="java.util.Date"/>
+		<result column="shiro_user_group_id" property="groupId"/>
+	</resultMap>
+	
+</mapper>

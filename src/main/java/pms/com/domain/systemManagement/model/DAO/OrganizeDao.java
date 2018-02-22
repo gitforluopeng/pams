@@ -68,6 +68,7 @@ public interface OrganizeDao {
 	 * 2017年11月30日
 	 */
 	public List<OrganizeManagement> getAllUnitList();
+	public List<OrganizeManagement> getNoLockedUnitLists();
 	/**
 	 * 
 	 *
@@ -80,6 +81,7 @@ public interface OrganizeDao {
 	 * 2017年11月30日
 	 */
 	public List<OrganizeManagement> getDeptByUnitId(Long unitId);
+	public List<OrganizeManagement> getNoLockedDeptByUnitId(Long unitId);
 	/**
 	 * 
 	 *

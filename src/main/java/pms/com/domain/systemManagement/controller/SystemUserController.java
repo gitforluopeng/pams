@@ -19,9 +19,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import pms.com.domain.systemManagement.model.MyShiroUserGroupRole;
 import pms.com.domain.systemManagement.model.MyUser;
 import pms.com.domain.systemManagement.model.OrganizeManagement;
+import pms.com.domain.systemManagement.model.Station;
 import pms.com.domain.systemManagement.model.SystemUser;
 import pms.com.domain.systemManagement.services.OperationLogInter;
 import pms.com.domain.systemManagement.services.SystemUserServiceInter;
+import pms.com.domain.systemManagement.services.Imp.StationServer;
 import pms.com.system.shiro.annotate.BeanParam;
 import pms.com.system.shiro.model.ShiroRole;
 import pms.com.system.shiro.model.ShiroUser;
@@ -36,6 +38,8 @@ public class SystemUserController {
 	private SystemUserServiceInter systemUserServer;
 	@Resource
 	private OperationLogInter operationLogInter;
+	@Resource
+	private StationServer stationServer;
 	
 	@RequestMapping(value="/user_index",method=RequestMethod.GET)
 	public String loadUserIndex(){
@@ -58,6 +62,15 @@ public class SystemUserController {
 		Map<String, Object> result = new HashMap<String, Object>();
 		List <OrganizeManagement> organizeManagements=systemUserServer.getAllUnitList();
 		result.put("units", organizeManagements);
+		return result;
+	}
+	
+	@RequestMapping(value="/load_all_stations",method=RequestMethod.GET)
+	@ResponseBody
+	public Map<String, Object> loadAllStations(){
+		Map<String, Object> result = new HashMap<String, Object>();
+		List <Station> stations=stationServer.getStation(null);
+		result.put("stations", stations);
 		return result;
 	}
 	

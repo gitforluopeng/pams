@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pms.com.domain.trainingPlan.model.DAO.TrainPlanDao">
+    <sql id="queryCondition">
+        <if test="id !=null and id !=''">
+			 and t.id=#{id}
+		</if>
+		<if test="unitId !=null and unitId !=''">
+			 and t.unitId = #{unitId}
+		</if>
+		<if test="unitName !=null and unitName !=''">
+			 and t.unitName = #{unitName}
+		</if>
+		<if test="deptId !=null and deptId !=''">
+			 and t.deptId = #{deptId}
+		</if>
+		<if test="deptName !=null and deptName !=''">
+			 and t.deptName = #{deptName}
+		</if>
+		<if test="trainContent !=null and trainContent !=''">
+			 and t.trainContent like CONCAT(CONCAT('%', #{trainContent}), '%')
+		</if>
+		<if test="startTime !=null and startTime !=''">
+			 and t.startTime &gt;= #{startTime}
+		</if>
+		<if test="endTime !=null and endTime !=''">
+			 and t.endTime &lt;= #{endTime}
+		</if>
+		<if test="createUserId !=null and createUserId !=''">
+			 and t.createUserId=#{createUserId}
+		</if>
+		<if test="createUserName !=null and createUserName !=''">
+			 and t.createUserName=#{createUserName}
+		</if>
+		<if test="createPersonName !=null and createPersonName !=''">
+			 and t.createPersonName=#{createPersonName}
+		</if>
+		<if test="createTime !=null and createTime !=''">
+			 and t.createTime=#{createTime}
+		</if>
+    </sql>
+    <select id="getTrainPlans" parameterType="java.util.HashMap" resultType="pms.com.domain.trainingPlan.model.TrainPlan">
+        select t.* from training_plan t where 1=1
+        <include refid="queryCondition"></include>
+        <if test="pageSize !=null and pageSize !=''">
+		     limit #{startNum},#{pageSize}
+		</if>
+    </select>
+    <select id="getTrainPlansCount" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+        select count(1) from training_plan t where 1=1
+        <include refid="queryCondition"></include>
+    </select>
+    <insert id="addTrainPlan" parameterType="pms.com.domain.trainingPlan.model.TrainPlan" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into training_plan (unitId,unitName,deptId,deptName,trainContent,startTime,endTime,createUserId,createUserName,createPersonName,createTime) values 
+        (#{unitId},#{unitName},#{deptId},#{deptName},#{trainContent},#{startTime},#{endTime},#{createUserId},#{createUserName},#{createPersonName},#{createTime})
+    </insert>
+    <update id="updateTrainPlan" parameterType="pms.com.domain.trainingPlan.model.TrainPlan">
+        update training_plan set trainContent=#{trainContent},startTime=#{startTime},endTime=#{endTime} where id=#{id}
+    </update>
+    <delete id="deleteTrainPlan" parameterType="pms.com.domain.trainingPlan.model.TrainPlan">
+        delete from training_plan where id=#{id}
+    </delete>
+</mapper>

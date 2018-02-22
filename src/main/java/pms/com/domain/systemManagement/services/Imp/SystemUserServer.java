@@ -38,7 +38,7 @@ public class SystemUserServer implements SystemUserServiceInter{
 	public List<OrganizeManagement> getAllUnitList() {
 		SqlSession session = sessionFactory.openSession();
 		OrganizeDao organizeDao = session.getMapper(OrganizeDao.class);
-		List<OrganizeManagement> organizeManagements=organizeDao.getAllUnitList();
+		List<OrganizeManagement> organizeManagements=organizeDao.getNoLockedUnitLists();
 		try {
 			session.close();
 		} catch (Exception e) {
@@ -51,7 +51,7 @@ public class SystemUserServer implements SystemUserServiceInter{
 	public List<OrganizeManagement> getDeptByUnitId(Long unitId) {
 		SqlSession session = sessionFactory.openSession();
 		OrganizeDao organizeDao = session.getMapper(OrganizeDao.class);
-		List<OrganizeManagement> organizeManagements=organizeDao.getDeptByUnitId(unitId);
+		List<OrganizeManagement> organizeManagements=organizeDao.getNoLockedDeptByUnitId(unitId);
 		try {
 			session.close();
 		} catch (Exception e) {

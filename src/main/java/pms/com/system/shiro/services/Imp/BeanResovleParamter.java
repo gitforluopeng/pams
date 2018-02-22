@@ -21,7 +21,7 @@ import pms.com.utils.LoggerUtil;
 
 public class BeanResovleParamter implements HandlerMethodArgumentResolver {
 	
-	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {

@@ -1,0 +1,9 @@
+package pms.com.utils;
+
+
+public class PageUtil {
+	public static Integer getStartNum(Integer page, Integer limit){
+		Integer startNum=(page-1)*limit;
+		return startNum;
+	}
+}

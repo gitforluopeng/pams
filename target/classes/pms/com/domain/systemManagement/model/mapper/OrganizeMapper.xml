@@ -15,8 +15,14 @@
 	<select id="getAllUnitList" resultMap="OrganizeManagement">
 		select * from shiro_user_group where type = 0
 	</select>
+	<select id="getNoLockedUnitLists" resultMap="OrganizeManagement">
+		select * from shiro_user_group where type = 0 and status != 0
+	</select>
 	<select id="getDeptByUnitId" resultMap="OrganizeManagement">
 		select * from shiro_user_group where parent_id = #{unitId}
+	</select>
+	<select id="getNoLockedDeptByUnitId" resultMap="OrganizeManagement">
+		select * from shiro_user_group where parent_id = #{unitId} and status != 0
 	</select>
 	<select id="getAllDept" resultMap="OrganizeManagement">
 		select * from shiro_user_group where parent_id = #{unitId} LIMIT #{offerIndex},#{pageSize}

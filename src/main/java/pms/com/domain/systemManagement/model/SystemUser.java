@@ -13,8 +13,10 @@ public class SystemUser implements Serializable {
 	private Long shiroUserId;//shirouserid
 	private String personName;//姓名
 	private String userNumber;//用户编号
+	private String education;//学历
 	private String userEmail;//邮箱
 	private Long userPhone;//电话
+	private Long stationId;//岗位id
 	private String otherInfo;//备注
 	private Long createUser;//创建用户id
 	private Date creatTime;//创建时间
@@ -94,5 +96,30 @@ public class SystemUser implements Serializable {
 	public void setLastLoginTime(Date lastLoginTime) {
 		this.lastLoginTime = lastLoginTime;
 	}
+	/**
+	 * @return the education
+	 */
+	public String getEducation() {
+		return education;
+	}
+	/**
+	 * @param education the education to set
+	 */
+	public void setEducation(String education) {
+		this.education = education;
+	}
+	/**
+	 * @return the stationId
+	 */
+	public Long getStationId() {
+		return stationId;
+	}
+	/**
+	 * @param stationId the stationId to set
+	 */
+	public void setStationId(Long stationId) {
+		this.stationId = stationId;
+	}
+	
 	
 }

@@ -16,8 +16,10 @@ public class MyUser implements Serializable {
 	private Long systemUserId;
 	private String personName;
 	private String userNumber;
+	private String education;//学历
 	private String userEmail;
 	private Long userPhone;
+	private Long stationId;//岗位id
 	private String otherInfo;
 	private Date createTime;
 	private Date lastLoginTime;
@@ -28,6 +30,7 @@ public class MyUser implements Serializable {
 	private Long shiroRoleId;
 	private String userType;
 	private String unitName;
+	private String stationName;
 	
 	public Long getShiroUserId() {
 		return shiroUserId;
@@ -143,5 +146,40 @@ public class MyUser implements Serializable {
 	public void setUnitName(String unitName) {
 		this.unitName = unitName;
 	}
-	
+	/**
+	 * @return the education
+	 */
+	public String getEducation() {
+		return education;
+	}
+	/**
+	 * @param education the education to set
+	 */
+	public void setEducation(String education) {
+		this.education = education;
+	}
+	/**
+	 * @return the stationId
+	 */
+	public Long getStationId() {
+		return stationId;
+	}
+	/**
+	 * @param stationId the stationId to set
+	 */
+	public void setStationId(Long stationId) {
+		this.stationId = stationId;
+	}
+	/**
+	 * @return the stationName
+	 */
+	public String getStationName() {
+		return stationName;
+	}
+	/**
+	 * @param stationName the stationName to set
+	 */
+	public void setStationName(String stationName) {
+		this.stationName = stationName;
+	}
 }

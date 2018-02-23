@@ -40,6 +40,42 @@ layui.use('form',function(){
                 layer.msg('啊喔，数据载入出现异常了，请刷新页面试试',{icon:5});
             }
         });
+        $.ajax({
+            type : "get",
+            async : true,
+            url : "systemManagement/load_all_stations",
+            success : function(data) {
+            	if(data==""||data==null||data==undefined){
+            		return;
+            	}
+                var obj = $('#station');
+                var stations=data["stations"];
+                for(var i = 0;i < stations.length; i++)
+                {
+                	var stationName=stations[i].stationName;
+                	var stationid=stations[i].id;
+                	var option = $('<option></option>');
+                    option.attr("value",stationid);
+                    option.html(stationName);
+                    obj.append(option);
+                }
+                form.render('select', 'selectdiv');
+            },
+            error: function(){
+                layer.msg('啊喔，数据载入出现异常了，请刷新页面试试',{icon:5});
+            }
+        });
+        var edus=['小学','初中','高中','本科','研究生','其他'];
+        var education=$('#education');
+        for(var i = 0;i < edus.length; i++)
+        {
+        	var educationName=edus[i];
+        	var option = $('<option></option>');
+            option.attr("value",educationName);
+            option.html(educationName);
+            education.append(option);
+        }
+        form.render('select', 'selectdiv');
         form.on('select(userUntil)',function (data){
             var until = data.value;
             var obj=$('#userDept');
@@ -161,9 +197,15 @@ layui.use('form',function(){
             }
             else if($("#userUntil").val()==0||$("#userUntil").val()==null||$("#userUntil").val()==undefined){
                 layer.msg('请选择所属单位',{icon:7});
-            }
+            }  
             else if($("#userDept").val()==0||$("#userDept").val()==null||$("#userDept").val()==undefined){
                 layer.msg('请选择所属部门',{icon:7});
+            }
+            else if($("#station").val()==0||$("#station").val()==null||$("#station").val()==undefined){
+                layer.msg('请选择所属岗位',{icon:7});
+            }
+            else if($("#education").val()==0||$("#education").val()==null||$("#education").val()==undefined){
+                layer.msg('请选择学历信息',{icon:7});
             }
             else{
                 saveData();
@@ -186,11 +228,17 @@ layui.use('form',function(){
         usertype.val("0");
         var unitl = $('#userUntil');
         unitl.val("0");
+        var station = $('#station');
+        var education=$('#education');
+        station.val("0");
+        education.val("0");
         obj.empty();
+        usertype.empty();
         var opt = $('<option></option>');
         opt.attr("value",0);
         opt.html('请选择');
         obj.append(opt);
+        usertype.append(opt);
         form.render('select', 'selectdiv');
     }
     
@@ -204,6 +252,8 @@ layui.use('form',function(){
         var otherInfo = $('#remarks').val();
         var shrioRoleId = $('#userType').val();
         var password = $('#password').val();
+        var station=$('#station').val();
+        var education=$('#education').val();
         var pwd = hex_md5(password).toUpperCase();
         loading = layer.load(1, {
             shade: [0.1,'#fff']
@@ -211,7 +261,7 @@ layui.use('form',function(){
         $.ajax({
             type: 'post',
             url: 'systemManagement/add_user',
-            data:{'shiroUser.username':username,'shiroUser.groupId':groupId,'password':pwd,'systemUser.personName':personName,'systemUser.userNumber':userNumber,'systemUser.userEmail':userEmail,'systemUser.userPhone':userPhone,'systemUser.otherInfo':otherInfo,'myShiroUserGroupRole.shrioRoleId':shrioRoleId},
+            data:{'shiroUser.username':username,'shiroUser.groupId':groupId,'password':pwd,'systemUser.personName':personName,'systemUser.userNumber':userNumber,'systemUser.education':education,'systemUser.userEmail':userEmail,'systemUser.userPhone':userPhone,'systemUser.stationId':station,'systemUser.otherInfo':otherInfo,'myShiroUserGroupRole.shrioRoleId':shrioRoleId},
             success: function(data){
                 if(data.status == 1){
                     layer.msg('保存成功',{icon:1});

@@ -3,193 +3,210 @@
 
 <mapper namespace="pms.com.domain.systemManagement.model.DAO.SystemUserDao">
      <insert id="addSystemUser" parameterType="pms.com.domain.systemManagement.model.SystemUser" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-         insert into system_user (shiro_user_id,person_name,user_number,user_email,user_phone,other_info,create_user,create_time,change_user,change_time,last_login_time) values 
-         (#{shiroUserId},#{personName},#{userNumber},#{userEmail},#{userPhone},#{otherInfo},#{createUser},#{creatTime},#{changeUser},#{changeTime},#{lastLoginTime})
+         insert into system_user (shiro_user_id,person_name,user_number,education,user_email,user_phone,stationId,other_info,create_user,create_time,change_user,change_time,last_login_time) values 
+         (#{shiroUserId},#{personName},#{userNumber},#{education},#{userEmail},#{userPhone},#{stationId},#{otherInfo},#{createUser},#{creatTime},#{changeUser},#{changeTime},#{lastLoginTime})
      </insert>
      <update id="updateSystemUser" parameterType="pms.com.domain.systemManagement.model.SystemUser">
-         update system_user set person_name=#{personName},user_number=#{userNumber},user_email=#{userEmail},user_phone=#{userPhone},other_info=#{otherInfo},change_user=#{changeUser},change_time=#{changeTime} where id=#{id}
+         update system_user set person_name=#{personName},user_number=#{userNumber},education=#{education},user_email=#{userEmail},user_phone=#{userPhone},stationId=#{stationId},other_info=#{otherInfo},change_user=#{changeUser},change_time=#{changeTime} where id=#{id}
      </update>
      <select id="getUserCount" resultType="java.lang.Integer">
          select count(*) from shiro_user
      </select>
      <select id="getUserForPage" resultMap="myUser">
-         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.user_email,m.user_phone,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName 
+         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.education,m.user_email,m.user_phone,m.stationId,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName,sta.stationName 
          FROM shiro_user s 
          LEFT JOIN system_user m on s.id=m.shiro_user_id
          LEFT JOIN shiro_user_group g on s.shiro_user_group_id=g.id
          LEFT JOIN shiro_user_roles u on s.id=u.shiro_user_id
          LEFT JOIN shiro_role r on r.id=u.shiro_role_id
          LEFT JOIN shiro_user_group d on g.parent_id=d.id
+         LEFT JOIN station sta on m.stationId=sta.id
          limit #{pageIndex},#{pageSize}
      </select>
      <select id="getUserForPageByName" resultMap="myUser">
-         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.user_email,m.user_phone,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName 
+         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.education,m.user_email,m.user_phone,m.stationId,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName,sta.stationName 
          FROM shiro_user s 
          LEFT JOIN system_user m on s.id=m.shiro_user_id
          LEFT JOIN shiro_user_group g on s.shiro_user_group_id=g.id
          LEFT JOIN shiro_user_roles u on s.id=u.shiro_user_id
          LEFT JOIN shiro_role r on r.id=u.shiro_role_id
          LEFT JOIN shiro_user_group d on g.parent_id=d.id
+         LEFT JOIN station sta on m.stationId=sta.id
          where s.username like CONCAT(CONCAT('%', #{uNameOrpNname}), '%') OR m.person_name like CONCAT(CONCAT('%', #{uNameOrpNname}), '%')
          limit #{pageIndex},#{pageSize}
      </select>
      <select id="getUserForPageByUnitId" resultMap="myUser">
-         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.user_email,m.user_phone,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName 
+         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.education,m.user_email,m.user_phone,m.stationId,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName,sta.stationName 
          FROM shiro_user s 
          LEFT JOIN system_user m on s.id=m.shiro_user_id
          LEFT JOIN shiro_user_group g on s.shiro_user_group_id=g.id
          LEFT JOIN shiro_user_roles u on s.id=u.shiro_user_id
          LEFT JOIN shiro_role r on r.id=u.shiro_role_id
          LEFT JOIN shiro_user_group d on g.parent_id=d.id
+         LEFT JOIN station sta on m.stationId=sta.id
          where d.id=#{unitId}
          limit #{pageIndex},#{pageSize}
      </select>
      <select id="getUserForPageByDeptId" resultMap="myUser">
-         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.user_email,m.user_phone,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName 
+         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.education,m.user_email,m.user_phone,m.stationId,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName,sta.stationName 
          FROM shiro_user s 
          LEFT JOIN system_user m on s.id=m.shiro_user_id
          LEFT JOIN shiro_user_group g on s.shiro_user_group_id=g.id
          LEFT JOIN shiro_user_roles u on s.id=u.shiro_user_id
          LEFT JOIN shiro_role r on r.id=u.shiro_role_id
          LEFT JOIN shiro_user_group d on g.parent_id=d.id
+         LEFT JOIN station sta on m.stationId=sta.id
          where d.id=#{unitId} and g.id=#{deptId}
          limit #{pageIndex},#{pageSize}
      </select>
      <select id="getUserForPageByNameAndUId" resultMap="myUser">
-         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.user_email,m.user_phone,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName 
+         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.education,m.user_email,m.user_phone,m.stationId,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName,sta.stationName 
          FROM shiro_user s 
          LEFT JOIN system_user m on s.id=m.shiro_user_id
          LEFT JOIN shiro_user_group g on s.shiro_user_group_id=g.id
          LEFT JOIN shiro_user_roles u on s.id=u.shiro_user_id
          LEFT JOIN shiro_role r on r.id=u.shiro_role_id
          LEFT JOIN shiro_user_group d on g.parent_id=d.id
+         LEFT JOIN station sta on m.stationId=sta.id
          where (s.username like CONCAT(CONCAT('%', #{uNameOrpNname}), '%') OR m.person_name like CONCAT(CONCAT('%', #{uNameOrpNname}), '%')) and d.id=#{unitId}
          limit #{pageIndex},#{pageSize}
      </select>
      <select id="getUserForPageByAllS" resultMap="myUser">
-         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.user_email,m.user_phone,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName 
+         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.education,m.user_email,m.user_phone,m.stationId,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName,sta.stationName 
          FROM shiro_user s 
          LEFT JOIN system_user m on s.id=m.shiro_user_id
          LEFT JOIN shiro_user_group g on s.shiro_user_group_id=g.id
          LEFT JOIN shiro_user_roles u on s.id=u.shiro_user_id
          LEFT JOIN shiro_role r on r.id=u.shiro_role_id
          LEFT JOIN shiro_user_group d on g.parent_id=d.id
+         LEFT JOIN station sta on m.stationId=sta.id
          where (s.username like CONCAT(CONCAT('%', #{uNameOrpNname}), '%') OR m.person_name like CONCAT(CONCAT('%', #{uNameOrpNname}), '%')) and d.id=#{unitId} and g.id=#{deptId}
          limit #{pageIndex},#{pageSize}
      </select>
      <select id="getUserForPageByRoleId" resultMap="myUser">
-         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.user_email,m.user_phone,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName 
+         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.education,m.user_email,m.user_phone,m.stationId,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName,sta.stationName 
          FROM shiro_user s 
          LEFT JOIN system_user m on s.id=m.shiro_user_id
          LEFT JOIN shiro_user_group g on s.shiro_user_group_id=g.id
          LEFT JOIN shiro_user_roles u on s.id=u.shiro_user_id
          LEFT JOIN shiro_role r on r.id=u.shiro_role_id
          LEFT JOIN shiro_user_group d on g.parent_id=d.id
+         LEFT JOIN station sta on m.stationId=sta.id
          where u.shiro_role_id=#{shiroRoleId}
          limit #{pageIndex},#{pageSize}
      </select>
      <select id="getUserForPageByUserType" resultMap="myUser">
-         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.user_email,m.user_phone,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName 
+         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.education,m.user_email,m.user_phone,m.stationId,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName,sta.stationName 
          FROM shiro_user s 
          LEFT JOIN system_user m on s.id=m.shiro_user_id
          LEFT JOIN shiro_user_group g on s.shiro_user_group_id=g.id
          LEFT JOIN shiro_user_roles u on s.id=u.shiro_user_id
          LEFT JOIN shiro_role r on r.id=u.shiro_role_id
          LEFT JOIN shiro_user_group d on g.parent_id=d.id
+         LEFT JOIN station sta on m.stationId=sta.id
          where r.name=#{userType}
          limit #{pageIndex},#{pageSize}
      </select>
      
      <select id="getUserByName" resultMap="myUser">
-         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.user_email,m.user_phone,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName 
+         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.education,m.user_email,m.user_phone,m.stationId,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName,sta.stationName 
          FROM shiro_user s 
          LEFT JOIN system_user m on s.id=m.shiro_user_id
          LEFT JOIN shiro_user_group g on s.shiro_user_group_id=g.id
          LEFT JOIN shiro_user_roles u on s.id=u.shiro_user_id
          LEFT JOIN shiro_role r on r.id=u.shiro_role_id
          LEFT JOIN shiro_user_group d on g.parent_id=d.id
+         LEFT JOIN station sta on m.stationId=sta.id
          where s.username like CONCAT(CONCAT('%', #{uNameOrpNname}), '%') OR m.person_name like CONCAT(CONCAT('%', #{uNameOrpNname}), '%')
      </select>
      <select id="getUserByUnitId" resultMap="myUser">
-         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.user_email,m.user_phone,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName 
+         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.education,m.user_email,m.user_phone,m.stationId,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName,sta.stationName 
          FROM shiro_user s 
          LEFT JOIN system_user m on s.id=m.shiro_user_id
          LEFT JOIN shiro_user_group g on s.shiro_user_group_id=g.id
          LEFT JOIN shiro_user_roles u on s.id=u.shiro_user_id
          LEFT JOIN shiro_role r on r.id=u.shiro_role_id
          LEFT JOIN shiro_user_group d on g.parent_id=d.id
+         LEFT JOIN station sta on m.stationId=sta.id
          where d.id=#{unitId}
      </select>
      <select id="getUserByDeptId" resultMap="myUser">
-         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.user_email,m.user_phone,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName 
+         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.education,m.user_email,m.user_phone,m.stationId,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName,sta.stationName 
          FROM shiro_user s 
          LEFT JOIN system_user m on s.id=m.shiro_user_id
          LEFT JOIN shiro_user_group g on s.shiro_user_group_id=g.id
          LEFT JOIN shiro_user_roles u on s.id=u.shiro_user_id
          LEFT JOIN shiro_role r on r.id=u.shiro_role_id
          LEFT JOIN shiro_user_group d on g.parent_id=d.id
+         LEFT JOIN station sta on m.stationId=sta.id
          where d.id=#{unitId} and g.id=#{deptId}
      </select>
      <select id="getUserByNameAndUId" resultMap="myUser">
-         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.user_email,m.user_phone,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName 
+         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.education,m.user_email,m.user_phone,m.stationId,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName,sta.stationName 
          FROM shiro_user s 
          LEFT JOIN system_user m on s.id=m.shiro_user_id
          LEFT JOIN shiro_user_group g on s.shiro_user_group_id=g.id
          LEFT JOIN shiro_user_roles u on s.id=u.shiro_user_id
          LEFT JOIN shiro_role r on r.id=u.shiro_role_id
          LEFT JOIN shiro_user_group d on g.parent_id=d.id
+         LEFT JOIN station sta on m.stationId=sta.id
          where (s.username like CONCAT(CONCAT('%', #{uNameOrpNname}), '%') OR m.person_name like CONCAT(CONCAT('%', #{uNameOrpNname}), '%')) and d.id=#{unitId}
      </select>
      <select id="getUserByAllS" resultMap="myUser">
-         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.user_email,m.user_phone,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName 
+         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.education,m.user_email,m.user_phone,m.stationId,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName,sta.stationName 
          FROM shiro_user s 
          LEFT JOIN system_user m on s.id=m.shiro_user_id
          LEFT JOIN shiro_user_group g on s.shiro_user_group_id=g.id
          LEFT JOIN shiro_user_roles u on s.id=u.shiro_user_id
          LEFT JOIN shiro_role r on r.id=u.shiro_role_id
          LEFT JOIN shiro_user_group d on g.parent_id=d.id
+         LEFT JOIN station sta on m.stationId=sta.id
          where (s.username like CONCAT(CONCAT('%', #{uNameOrpNname}), '%') OR m.person_name like CONCAT(CONCAT('%', #{uNameOrpNname}), '%')) and d.id=#{unitId} and g.id=#{deptId}
      </select>
      <select id="getAllUserByRoleId" resultMap="myUser">
-         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.user_email,m.user_phone,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName 
+         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.education,m.user_email,m.user_phone,m.stationId,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName,sta.stationName 
          FROM shiro_user s 
          LEFT JOIN system_user m on s.id=m.shiro_user_id
          LEFT JOIN shiro_user_group g on s.shiro_user_group_id=g.id
          LEFT JOIN shiro_user_roles u on s.id=u.shiro_user_id
          LEFT JOIN shiro_role r on r.id=u.shiro_role_id
          LEFT JOIN shiro_user_group d on g.parent_id=d.id
+         LEFT JOIN station sta on m.stationId=sta.id
          where u.shiro_role_id=#{shiroRoleId}
      </select>
      <select id="getAllUserByUserType" resultMap="myUser">
-         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.user_email,m.user_phone,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName 
+         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.education,m.user_email,m.user_phone,m.stationId,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName,sta.stationName 
          FROM shiro_user s 
          LEFT JOIN system_user m on s.id=m.shiro_user_id
          LEFT JOIN shiro_user_group g on s.shiro_user_group_id=g.id
          LEFT JOIN shiro_user_roles u on s.id=u.shiro_user_id
          LEFT JOIN shiro_role r on r.id=u.shiro_role_id
          LEFT JOIN shiro_user_group d on g.parent_id=d.id
+         LEFT JOIN station sta on m.stationId=sta.id
          where r.name=#{userType}
      </select>
      
      <select id="getUserByShiroUserId" parameterType="java.lang.Long" resultMap="myUser">
-         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.user_email,m.user_phone,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName 
+         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.education,m.user_email,m.user_phone,m.stationId,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName,sta.stationName 
          FROM shiro_user s 
          LEFT JOIN system_user m on s.id=m.shiro_user_id
          LEFT JOIN shiro_user_group g on s.shiro_user_group_id=g.id
          LEFT JOIN shiro_user_roles u on s.id=u.shiro_user_id
          LEFT JOIN shiro_role r on r.id=u.shiro_role_id
          LEFT JOIN shiro_user_group d on g.parent_id=d.id
+         LEFT JOIN station sta on m.stationId=sta.id
          where s.id=#{shiroUserId}
      </select>
      
      <select id="getUserByUserName" parameterType="java.lang.String" resultMap="myUser">
-         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.user_email,m.user_phone,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName 
+         select s.id as shiroUserId,s.username,s.password,s.accountLockStatus,m.id as systemUserId,m.person_name,m.user_number,m.education,m.user_email,m.user_phone,m.stationId,m.other_info,m.create_time,m.last_login_time,g.id as deptid,g.name as deptname,g.parent_id as unitid,u.id as myroleid,u.shiro_role_id,r.name as userTpye,d.name as unitName,sta.stationName 
          FROM shiro_user s 
          LEFT JOIN system_user m on s.id=m.shiro_user_id
          LEFT JOIN shiro_user_group g on s.shiro_user_group_id=g.id
          LEFT JOIN shiro_user_roles u on s.id=u.shiro_user_id
          LEFT JOIN shiro_role r on r.id=u.shiro_role_id
          LEFT JOIN shiro_user_group d on g.parent_id=d.id
+         LEFT JOIN station sta on m.stationId=sta.id
          where s.username=#{userName}
      </select>
      
@@ -207,8 +224,10 @@
          <result column="systemUserId" property="systemUserId"/>
          <result column="person_name" property="personName"/>
          <result column="user_number" property="userNumber"/>
+         <result column="education" property="education"/>
          <result column="user_email" property="userEmail"/>
          <result column="user_phone" property="userPhone"/>
+         <result column="stationId" property="stationId"/>
          <result column="other_info" property="otherInfo"/>
          <result column="create_time" property="createTime"/>
          <result column="last_login_time" property="lastLoginTime"/>
@@ -219,14 +238,17 @@
          <result column="shiro_role_id" property="shiroRoleId"/>
          <result column="userTpye" property="userType"/>
          <result column="unitName" property="unitName"/>
+         <result column="stationName" property="stationName"/>
      </resultMap>
      <resultMap type="pms.com.domain.systemManagement.model.SystemUser" id="systemUser">
          <id column="id" property="id"></id>
          <result column="shiro_user_id" property="shiroUserId"/>
          <result column="person_name" property="personName"/>
          <result column="user_number" property="userNumber"/>
+         <result column="education" property="education"/>
          <result column="user_email" property="userEmail"/>
          <result column="user_phone" property="userPhone"/>
+         <result column="stationId" property="stationId"/>
          <result column="other_info" property="otherInfo"/>
          <result column="create_user" property="createUser"/>
          <result column="create_time" property="creatTime"/>

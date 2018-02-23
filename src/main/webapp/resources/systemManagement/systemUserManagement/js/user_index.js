@@ -126,7 +126,7 @@ layui.use(['form','table'],function(){
             title: '编辑用户信息',
             shadeClose: false,
             shade: 0.8,
-            area: ['900px','690px'],
+            area: ['900px','790px'],
             content: 'systemManagement/user_edit',//iframe的url
             end: function () {
                 table.reload('reload');
@@ -215,7 +215,7 @@ layui.use(['form','table'],function(){
                 title: '添加用户',
                 shadeClose: false,
                 shade: 0.8,
-                area: ['900px','690px'],
+                area: ['900px','790px'],
                 content: 'systemManagement/user_add',//iframe的url
                 end: function () {
                     table.reload('reload');
@@ -275,10 +275,12 @@ layui.use(['form','table'],function(){
                 {field: 'userType', align:'center',title: '用户类型', width:102},
                 {field: 'unitName', align:'center',title: '所属单位名称', width:145},
                 {field: 'deptName',align:'center', title: '所属部门名称', width:119},
+                {field: 'stationName',align:'center', title: '所属岗位', width:119},
+                {field: 'education',align:'center', title: '学历', width:119},
                 {field: 'userEmail',align:'center', title: '邮箱地址', width:160},
                 {field: 'userPhone',align:'center', title: '联系电话', width:160},
-                {field: 'createTime',align:'center', title: '添加时间', width:179,templet:'#usercreattime'},
-                {field: 'lastLoginTime',align:'center', title: '最后登录时间', width:179,templet:'#logintime'},
+                {field: 'createTime',align:'center', title: '添加时间', width:150,templet:'#usercreattime'},
+                {field: 'lastLoginTime',align:'center', title: '最后登录时间', width:150,templet:'#logintime'},
                 {field: 'accountLockStatus',title: '是否启用', align:'center',width: 140, templet: '#titleTpl'},
                 {fixed: 'right', title: '操作', width:144, align:'center', field: 'right', toolbar: '#barDemo'}
             ]]

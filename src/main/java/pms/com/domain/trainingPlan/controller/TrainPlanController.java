@@ -18,7 +18,6 @@ import pms.com.domain.trainingPlan.model.TrainPlan;
 import pms.com.domain.trainingPlan.services.TrainPlanServiceInter;
 import pms.com.system.shiro.annotate.BeanParam;
 import pms.com.system.shiro.util.UserUtil;
-import pms.com.utils.LoggerUtil;
 import pms.com.utils.PageUtil;
 
 @Controller

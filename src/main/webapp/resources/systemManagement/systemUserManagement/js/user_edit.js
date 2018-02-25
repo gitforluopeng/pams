@@ -67,6 +67,48 @@ layui.use('form',function(){
                 layer.msg('啊喔，数据载入出现异常了，请刷新页面试试',{icon:5});
             }
         });
+        $.ajax({
+            type : "get",
+            async : true,
+            url : "systemManagement/load_all_stations",
+            success : function(data) {
+            	if(data==""||data==null||data==undefined){
+            		return;
+            	}
+                var obj = $('#station');
+                var stations=data["stations"];
+                for(var i = 0;i < stations.length; i++)
+                {
+                	var stationName=stations[i].stationName;
+                	var stationid=stations[i].id;
+                	var option = $('<option></option>');
+                    option.attr("value",stationid);
+                    option.html(stationName);
+                    obj.append(option);
+                    if(stationid==window.parent.document.data.stationId){
+                    	option.attr("selected","selected");
+                    }
+                }
+                form.render('select', 'selectdiv');
+            },
+            error: function(){
+                layer.msg('啊喔，数据载入出现异常了，请刷新页面试试',{icon:5});
+            }
+        });
+        var edus=['小学','初中','高中','本科','研究生','其他'];
+        var education=$('#education');
+        for(var i = 0;i < edus.length; i++)
+        {
+        	var educationName=edus[i];
+        	var option = $('<option></option>');
+            option.attr("value",educationName);
+            option.html(educationName);
+            education.append(option);
+            if(educationName==data.education){
+            	option.attr("selected","selected");
+            }
+        }
+        form.render('select', 'selectdiv');
         form.on('select(userUntil)',function (data){
         	var until = data.value;
             var obj=$('#userDept');
@@ -168,6 +210,8 @@ layui.use('form',function(){
             var otherInfo = $('#remarks').val();
             var shrioRoleId = $('#userType').val();
             var password = $('#password').val();
+            var station=$('#station').val();
+            var education=$('#education').val();
             var aginpassword=$('#againPwd').val();
             if(!(checkIsNotNull(username)&&checkIsNotNull(personName)&&checkIsNotNull(userNumber)&&checkIsNotNull(userEmail)&&checkIsNotNull(userPhone)&&checkIsNotNull(password)&checkIsNotNull(aginpassword))){
         		return;
@@ -187,7 +231,7 @@ layui.use('form',function(){
         	if(!checkIsSame(password,aginpassword)){
         		return;
         	}
-            if(window.document.username==username&&window.document.groupId==groupId&&window.document.personName==personName&&window.document.userNumber==userNumber&&window.document.userEmail==userEmail&&window.document.userPhone==userPhone&&window.document.otherInfo==otherInfo&&window.document.shrioRoleId==shrioRoleId&&window.document.password==password){
+            if(window.document.username==username&&window.document.groupId==groupId&&window.document.personName==personName&&window.document.userNumber==userNumber&&window.document.userEmail==userEmail&&window.document.userPhone==userPhone&&window.document.otherInfo==otherInfo&&window.document.shrioRoleId==shrioRoleId&&window.document.password==password&&window.document.station==station&&window.document.education==education){
             	layer.msg('您没有修改任何信息，操作被拒绝了喔',{icon:2});
             	return;
             }
@@ -199,6 +243,12 @@ layui.use('form',function(){
             }
             else if($("#userDept").val()==0||$("#userDept").val()==null||$("#userDept").val()==undefined){
                 layer.msg('请选择所属部门',{icon:7});
+            }
+            else if($("#station").val()==0||$("#station").val()==null||$("#station").val()==undefined){
+                layer.msg('请选择所属岗位',{icon:7});
+            }
+            else if($("#education").val()==0||$("#education").val()==null||$("#education").val()==undefined){
+                layer.msg('请选择学历信息',{icon:7});
             }
             else{
                 saveData(uneditusername);
@@ -217,6 +267,8 @@ layui.use('form',function(){
         var otherInfo = $('#remarks').val();
         var shrioRoleId = $('#userType').val();
         var password = $('#password').val();
+        var station=$('#station').val();
+        var education=$('#education').val();
         var pwd = hex_md5(password).toUpperCase();
         window.document.username=username;
         window.document.groupId=groupId;
@@ -227,13 +279,15 @@ layui.use('form',function(){
         window.document.otherInfo=otherInfo;
         window.document.shrioRoleId=shrioRoleId;
         window.document.password=password;
+        window.document.station=station;
+        window.document.education=education;
         loading = layer.load(1, {
             shade: [0.1,'#fff']
         });
         $.ajax({
             type: 'post',
             url: 'systemManagement/update_user',
-            data:{'shiroUser.id':data.shiroUserId,'shiroUser.username':username,'shiroUser.groupId':groupId,'unEditUsername':uneditusername,'password':pwd,'systemUser.id':data.systemUserId,'systemUser.personName':personName,'systemUser.userNumber':userNumber,'systemUser.userEmail':userEmail,'systemUser.userPhone':userPhone,'systemUser.otherInfo':otherInfo,'myShiroUserGroupRole.id':data.myRoleId,'myShiroUserGroupRole.shrioRoleId':shrioRoleId},
+            data:{'shiroUser.id':data.shiroUserId,'shiroUser.username':username,'shiroUser.groupId':groupId,'unEditUsername':uneditusername,'password':pwd,'systemUser.id':data.systemUserId,'systemUser.personName':personName,'systemUser.userNumber':userNumber,'systemUser.education':education,'systemUser.userEmail':userEmail,'systemUser.userPhone':userPhone,'systemUser.stationId':station,'systemUser.otherInfo':otherInfo,'myShiroUserGroupRole.id':data.myRoleId,'myShiroUserGroupRole.shrioRoleId':shrioRoleId},
             success: function(data){
             	if(data.status == 1){
                     layer.msg('保存成功',{icon:1});

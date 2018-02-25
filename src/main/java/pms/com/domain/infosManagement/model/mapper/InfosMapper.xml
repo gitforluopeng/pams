@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pms.com.domain.infosManagement.model.DAO.InfosDao">
+    <sql id="queryCondition">
+        <if test="id !=null and id !=''">
+			 and t.id=#{id}
+		</if>
+		<if test="userId !=null and userId !=''">
+			 and t.userId = #{userId}
+		</if>
+		<if test="userName !=null and userName !=''">
+			 and t.userName = #{userName}
+		</if>
+		<if test="personName !=null and personName !=''">
+			 and t.personName = #{personName}
+		</if>
+		<if test="unitId !=null and unitId !=''">
+			 and t.unitId = #{unitId}
+		</if>
+		<if test="unitName !=null and unitName !=''">
+			 and t.unitName = #{unitName}
+		</if>
+		<if test="deptId !=null and deptId !=''">
+			 and t.deptId = #{deptId}
+		</if>
+		<if test="deptName !=null and deptName !=''">
+			 and t.deptName = #{deptName}
+		</if>
+		<if test="infoType !=null and infoType !=''">
+			 and t.infoType = #{infoType}
+		</if>
+		<if test="infoContent !=null and infoContent !=''">
+			 and t.infoContent = #{infoContent}
+		</if>
+		<if test="createUserId !=null and createUserId !=''">
+			 and t.createUserId=#{createUserId}
+		</if>
+		<if test="createUserName !=null and createUserName !=''">
+			 and t.createUserName=#{createUserName}
+		</if>
+		<if test="createPersonName !=null and createPersonName !=''">
+			 and t.createPersonName=#{createPersonName}
+		</if>
+		<if test="createTime !=null and createTime !=''">
+			 and t.createTime=#{createTime}
+		</if>
+    </sql>
+    <select id="getInfos" parameterType="java.util.HashMap" resultType="pms.com.domain.infosManagement.model.Infos">
+        select t.* from infos t where 1=1
+        <include refid="queryCondition"></include>
+        <if test="pageSize !=null and pageSize !=''">
+		     limit #{startNum},#{pageSize}
+		</if>
+    </select>
+    <select id="getInfosCount" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+        select count(1) from infos t where 1=1
+        <include refid="queryCondition"></include>
+    </select>
+    <insert id="addInfos" parameterType="pms.com.domain.infosManagement.model.Infos" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into infos (userId,userName,personName,unitId,unitName,deptId,deptName,infoType,infoContent,createUserId,createUserName,createPersonName,createTime) values 
+        (#{userId},#{userName},#{personName},#{unitId},#{unitName},#{deptId},#{deptName},#{infoType},#{infoContent},#{createUserId},#{createUserName},#{createPersonName},#{createTime})
+    </insert>
+    <delete id="deleteInfos" parameterType="pms.com.domain.infosManagement.model.Infos">
+        delete from infos where id=#{id}
+    </delete>
+</mapper>

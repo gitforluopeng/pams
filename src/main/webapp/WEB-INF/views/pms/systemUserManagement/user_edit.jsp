@@ -107,6 +107,24 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
             </div>
         </div>
         <div style="margin-top: 10px;margin-left: auto;width: 100%;" class="layui-inline">
+            <div style="margin-top: 25px;width: 100%;" class="layui-inline">
+                <div style="margin-left: 50px;height:30px;width:100px;" class="layui-inline"><span style="color: red">*&nbsp;</span>所属岗位:
+                </div>
+                <div style="width: 250px;height:50px;margin-left: 10px" class="layui-inline">
+                    <select id="station" class="layui-select">
+                        <option value="0">请选择</option>
+                    </select>
+                </div>
+                <div style="margin-left: 20px;height:30px;width:100px;" class="layui-inline"><span style="color: red">*&nbsp;</span>学&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;历:
+                </div>
+                <div style="width: 250px;height:50px;margin-left: 10px" class="layui-inline">
+                    <select id="education" class="layui-select">
+                        <option value="0">请选择</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 10px;margin-left: auto;width: 100%;" class="layui-inline">
             <div style="margin-top: 30px;width: 100%;" class="layui-inline">
                 <div style="margin-left: 50px;height:30px;width:100px;" class="layui-inline"><font color="red">*&nbsp;</font>登录密码:
                 </div>

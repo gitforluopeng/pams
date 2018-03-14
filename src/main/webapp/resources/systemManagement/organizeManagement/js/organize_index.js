@@ -10,7 +10,6 @@ layui.use(['form','table','layer'],function(){
 	var unitTable = $('#unitDiv');
     var unitname = $('#unitname');
     var deptname = $('#deptname');
-    var addUnitBtn = $('#addUnitBtn');
     var context = '<div style="width: 100%;font-size: 18px">\n' +
     '    <table id="userTable"></table>\n' +
     '</div>';
@@ -23,7 +22,6 @@ layui.use(['form','table','layer'],function(){
     	init_unit_table();
     	init_dept_table();
         init_addBtn();
-        init_addUnitBtn();
         init_queryBtn();
         init_resetBtn();
         init_backBtn();
@@ -185,7 +183,7 @@ layui.use(['form','table','layer'],function(){
         table.render({
             id: 'unitReload',
             elem: '#unitTable',
-            height: 'full-180',
+            height: 'full-250',
             method:'post',
             url: 'systemManagement/load_unit',
             page: true,
@@ -208,7 +206,7 @@ layui.use(['form','table','layer'],function(){
         table.render({
             id: 'deptReload',
             elem: '#deptTable',
-            height: 'full-180',
+            height: 'full-250',
             method:'post',
             url: '',
             cellMinWidth: 120,

@@ -1,0 +1,490 @@
+package pms.com.domain.systemManagement.controller;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import org.json.JSONObject;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import pms.com.domain.systemManagement.model.OrganizeManagement;
+import pms.com.domain.systemManagement.services.OperationLogInter;
+import pms.com.domain.systemManagement.services.OrganizeServiceInter;
+import pms.com.system.shiro.model.ShiroUser;
+import pms.com.system.shiro.util.UserUtil;
+
+@Controller
+public class OrganizeController {
+	private static String basePath = "pms/organize";
+
+	@Resource
+	private OrganizeServiceInter organizeServiceInter;
+	@Resource
+	private OperationLogInter operationLogInter;
+	@RequestMapping(value="/organize_index",method=RequestMethod.GET)
+	public String organizeIndex(){
+		return basePath+"/organize_index.jsp";
+	}
+	@RequestMapping(value="/organize_add",method=RequestMethod.GET)
+	public String deptAdd(){
+		return basePath+"/dept_add.jsp";
+	}
+	@RequestMapping(value="/dept_edit",method=RequestMethod.GET)
+	public String deptEdit(){
+		return basePath+"/dept_edit.jsp";
+	}
+	@RequestMapping(value="/set_permissions",method=RequestMethod.GET)
+	public String setPermissions(){
+		return basePath+"/rights_management.jsp";
+	}
+	@RequestMapping(value="/add_role",method=RequestMethod.GET)
+	public String addRole(){
+		return basePath+"/role_add.jsp";
+	}
+	@RequestMapping(value="/del_role",method=RequestMethod.GET)
+	public String delRole(){
+		return basePath+"/role_del.jsp";
+	}
+	@RequestMapping(value="/unit_add",method=RequestMethod.GET)
+	public String addUnit(){
+		return basePath+"/unit_add.jsp";
+	}
+	@RequestMapping(value="/unit_edit",method=RequestMethod.GET)
+	public String editUnit(){
+		return basePath+"/unit_edit.jsp";
+	}
+
+	@RequestMapping(value="/load_unit", method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> loadAllOrganize(Integer page, Integer limit){
+		Map<String, Object> result = new HashMap<String, Object>();
+		List<OrganizeManagement> organizeManagements = organizeServiceInter.getAllUnit(page-1, limit);
+		List<Map<String, Object>> data = new ArrayList<Map<String,Object>>();
+		Long unitId = 0l;
+		int deptCount = 0;
+		int count = organizeServiceInter.getUnitCount();
+		SimpleDateFormat sFormat= new SimpleDateFormat("yyyy-MM-dd");
+		String createTime = "";
+		OrganizeManagement organizeManagement = new OrganizeManagement(); 
+		for(int i = 0;i < organizeManagements.size(); i++){
+			Map<String, Object> map = new HashMap<String, Object>();
+			organizeManagement = organizeManagements.get(i);
+			unitId = organizeManagement.getId();
+			deptCount = organizeServiceInter.getDeptCountByUnitId(unitId);
+			if(organizeManagement.getCreateTime() != null){
+				createTime = sFormat.format(organizeManagement.getCreateTime());
+			}
+			map.put("id", unitId);
+			map.put("untilname", organizeManagement.getName());
+			map.put("deptcount", deptCount);
+			map.put("createTime", createTime);
+			map.put("status", organizeManagement.isStatus());
+			map.put("description", organizeManagement.getDescription());
+			data.add(map);
+		}
+
+		result.put("code", 0);
+		result.put("msg", "");
+		result.put("count", count);
+		result.put("data", data);
+		return result;
+	}
+
+	@RequestMapping(value="/load_dept", method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> getDeptByUnitId(Long unitId,Integer page, Integer limit){
+		Map<String, Object> result = new HashMap<String, Object>();
+		List<Map<String, Object>> data = new ArrayList<Map<String,Object>>();
+		int deptCount = 0;
+		if(unitId != null){
+			List<OrganizeManagement> organizeManagements = 
+					organizeServiceInter.getAllDeptByUnitId(unitId, page-1, limit);
+			deptCount = organizeServiceInter.getDeptCountByUnitId(unitId);
+
+			SimpleDateFormat sFormat = new SimpleDateFormat("yyyy-MM-dd");
+			OrganizeManagement organizeManagement = new OrganizeManagement();
+			Long deptId = 0l;
+			String createTime = "";
+			for(int i = 0;i < organizeManagements.size(); i++){
+				Map<String, Object> map = new HashMap<String, Object>();
+				organizeManagement = organizeManagements.get(i);
+				deptId = organizeManagement.getId();
+				if(organizeManagement.getCreateTime() != null)
+					createTime = sFormat.format(organizeManagement.getCreateTime());
+				map.put("id", deptId);
+				map.put("deptname", organizeManagement.getName());
+				map.put("description", organizeManagement.getDescription());
+				map.put("usercount", organizeServiceInter.getUsercountByDeptId(deptId));
+				map.put("createTime", createTime);
+				map.put("status", organizeManagement.isStatus());
+				data.add(map);
+			}
+		}
+		result.put("code", 0);
+		result.put("msg", "");
+		result.put("count", deptCount);
+		result.put("data", data);
+		return result;
+	}
+
+	@RequestMapping(value="/load_user",method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> getUserMsgByDeptId(Long deptId,Integer page, Integer limit){
+		Map<String, Object> result = new HashMap<String, Object>();
+		List<ShiroUser> shiroUsers = organizeServiceInter.getShiroUsersByDeptId(deptId, page-1, limit);
+		List<Map<String, Object>> data = new ArrayList<Map<String,Object>>();
+		int userCount = 0;
+		if(deptId != null){
+			userCount = organizeServiceInter.getUsercountByDeptId(deptId);
+			String userName = "";
+			String personName = "";
+			Long shiroUserId = 0l;
+			for(int i = 0; i < shiroUsers.size(); i++){
+				Map<String, Object> map = new HashMap<String, Object>();
+				shiroUserId = shiroUsers.get(i).getId();
+				userName = shiroUsers.get(i).getUsername();
+				personName = organizeServiceInter.getSystemUserByShiroUserId(shiroUserId).getPersonName();
+				map.put("userName", userName);
+				map.put("personName", personName);
+				data.add(map);
+			}
+		}
+		result.put("code", 0);
+		result.put("msg", "");
+		result.put("count", userCount);
+		result.put("data", data);
+		return result;
+	}
+
+	@RequestMapping(value="/load_edit", method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> getEditData(String deptId){
+		Map<String, Object> result = new HashMap<String, Object>();
+		if(deptId !=null || deptId !=""){
+			Long deptIdLong = Long.parseLong(deptId);
+			Long parentIdLong = 0l;
+			OrganizeManagement organizeManagement = 
+					organizeServiceInter.getManagementById(deptIdLong);
+			parentIdLong = organizeManagement.getParentId();
+			result.put("unitname", organizeServiceInter.getUnitNameByParentId(parentIdLong));
+			result.put("deptname", organizeManagement.getName());
+			result.put("remarks", organizeManagement.getDescription());
+		}
+		return result;
+	}
+
+	@RequestMapping(value="/get_organize", method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> getOrganizeById(Long id) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		if(id !=null){
+			OrganizeManagement organizeManagement = 
+					organizeServiceInter.getManagementById(id);
+			result.put("organize", organizeManagement);
+		}
+		return result;
+	}
+
+	@RequestMapping(value="/load_roles", method=RequestMethod.GET)
+	@ResponseBody
+	public List<String> getAllRoles(Long id){
+		List<String> list = new ArrayList<String>();
+		int type = organizeServiceInter.getTypeById(id);
+		if(type == 0){
+			list = organizeServiceInter.getAllRoles();
+		}else if(type == 1){
+			list = organizeServiceInter.getUnitRolesName(organizeServiceInter.getManagementById(id).getParentId());
+		}
+		return list;
+	}
+	@RequestMapping(value="/load_unit_roles", method=RequestMethod.GET)
+	@ResponseBody
+	public List<String> getUnitRoles(Long unitId){
+		List<String> list = organizeServiceInter.getUnitRolesName(unitId);
+		return list;
+	}
+	@RequestMapping(value="/load_organize_roles", method=RequestMethod.GET)
+	@ResponseBody
+	public Map<String, Object> getRolesForPage(Long id,Integer page, Integer limit){
+		Map<String, Object> result = new HashMap<String, Object>();
+		List<Map<String, Object>> data = new ArrayList<Map<String,Object>>();
+		List<String> list = organizeServiceInter.getOrganizeRoles(id,page-1,limit);
+		int count = organizeServiceInter.getCountForOrganizeRole(id);
+		for (int i = 0; i < list.size(); i++) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("rolename", list.get(i));
+			data.add(map);
+		}
+		result.put("code", 0);
+		result.put("msg", "");
+		result.put("count", count);
+		result.put("data", data);
+		return result;
+	}
+
+	@RequestMapping(value="/delete_role", method=RequestMethod.POST)
+	@ResponseBody
+	public int deleteRole(Long groupid,String rolename,HttpServletRequest request){
+		int result = 0;
+		int status = organizeServiceInter.deleteRole(groupid, rolename);
+		if(1 == status){
+			StringBuilder record = new StringBuilder("删除");
+			int type = organizeServiceInter.getTypeById(groupid);
+			if(0 == type){
+				record.append(organizeServiceInter.getManagementById(groupid).getName());
+			}else if(1 == type){
+				Long unitIdLong = organizeServiceInter.getManagementById(groupid).getParentId();
+				String unitNameString = organizeServiceInter.getManagementById(unitIdLong).getName();
+				String deptNameString = organizeServiceInter.getManagementById(groupid).getName();
+				record.append(unitNameString);
+				record.append(deptNameString);
+			}
+			record.append("角色: ");
+			record.append(rolename);
+			operationLogInter.insertOperationLog(record.toString(), request);
+		}
+		result = status;
+		return result;
+	}
+
+	@RequestMapping(value="/update_status", method=RequestMethod.POST)
+	@ResponseBody
+	public String updateStatus(Long id,boolean status,HttpServletRequest request){
+		JSONObject jsonObject = new JSONObject();
+		if(organizeServiceInter.updateStatus(id, !status)){
+			OrganizeManagement organizeManagement = organizeServiceInter.getManagementById(id);
+			StringBuilder record = new StringBuilder("设置");
+			String deptNameString = organizeManagement.getName();
+			if(organizeServiceInter.getTypeById(id) == 1){
+				Long parentIdLong = organizeManagement.getParentId();
+				organizeManagement = organizeServiceInter.getManagementById(parentIdLong);
+				record.append(organizeManagement.getName());
+				record.append(deptNameString);
+			}else{
+				record.append(deptNameString);
+			}
+			record.append(status?"停用":"启用");
+			operationLogInter.insertOperationLog(record.toString(), request);
+			jsonObject.put("status", "success");
+		}else {
+			jsonObject.put("status", "error");
+		}
+		return jsonObject.toString();
+	}
+
+	@RequestMapping(value="/save_edit", method=RequestMethod.POST)
+	@ResponseBody
+	public int updateDept(String deptname, String remarks, String deptId,HttpServletRequest request){
+		int result = 0;
+		if(deptname != null ||deptname != ""
+				|| remarks != null||remarks !=""||deptId !=null || deptId!=""){
+			Long deptIdLong = Long.parseLong(deptId);
+			String modfiyUser = UserUtil.getUserName();
+			List<String> deptNamesList = organizeServiceInter.getDeptNameByUnitId(organizeServiceInter.getManagementById(deptIdLong).getParentId());
+			for (int i = 0; i < deptNamesList.size(); i++) {
+				if(deptname.equals(deptNamesList.get(i))){
+					if(!deptname.equals(organizeServiceInter.getManagementById(deptIdLong).getName())){
+						return 2;
+					}
+				}
+			}
+			Date nowDate = new Date();
+			int status = organizeServiceInter.updateDept(deptname, remarks, deptIdLong,modfiyUser,nowDate);
+			if(1 == status){
+				StringBuilder record = new StringBuilder("编辑");
+				Long id = Long.parseLong(deptId);
+				OrganizeManagement organizeManagement = organizeServiceInter.getManagementById(id);
+				String beforeNameString = organizeManagement.getName();
+				String unitNameString = organizeServiceInter.getManagementById(organizeManagement.getParentId()).getName();
+				record.append(unitNameString);
+				record.append(beforeNameString);
+				operationLogInter.insertOperationLog(record.toString(), request);
+			}
+			result = status;
+		}
+		return result;
+	}
+	@RequestMapping(value="/save_unit_edit", method=RequestMethod.POST)
+	@ResponseBody
+	public int updateUnit(Long unitId,String unitName,String remarks,HttpServletRequest request){
+		int result = 0;
+		if(unitName != null ||unitName != ""
+				|| remarks != null||remarks !=""){
+			String unitNamaString= organizeServiceInter.getManagementById(unitId).getName();
+			String modfiyPeople = UserUtil.getUserName();
+			Date modfiyDate = new Date();
+			int status = 0;
+			if(unitNamaString.equals(unitName)){
+				status = organizeServiceInter.updateUnit(unitId, unitName, remarks, modfiyPeople, modfiyDate);
+			} else {
+				List<OrganizeManagement> organizeManagements = organizeServiceInter.getAllUnit();
+				for (int i = 0; i < organizeManagements.size(); i++) {
+					if(unitName.equals(organizeManagements.get(i).getName())){
+						result = 2;
+						return result;
+					}
+				}
+				status = organizeServiceInter.updateUnit(unitId, unitName, remarks, modfiyPeople, modfiyDate);
+			}
+			if(status == 1){
+				StringBuilder record = new StringBuilder("编辑单位 ：");
+				record.append(unitNamaString);
+				operationLogInter.insertOperationLog(record.toString(), request);
+			}
+			result = status;
+		}
+		return result;
+	}
+
+	@RequestMapping(value="/delete_dept", method=RequestMethod.POST)
+	@ResponseBody
+	public int deleteDept(Long deptId,HttpServletRequest request){
+		int result = 0;
+		if(deptId != null){
+			OrganizeManagement organizeManagement = organizeServiceInter.getManagementById(deptId);
+			int status = organizeServiceInter.deleteDeptByDeptId(deptId);
+			if(1 == status){
+				StringBuilder record = new StringBuilder("删除");
+				String deptNameString = organizeManagement.getName();
+				String unitNameString = organizeServiceInter.getManagementById(organizeManagement.getParentId()).getName();
+				record.append(unitNameString);
+				record.append(deptNameString);
+				operationLogInter.insertOperationLog(record.toString(), request);
+			}
+			result = status;
+		}
+		return result;
+	}
+
+	@RequestMapping(value="/delete_unit", method=RequestMethod.POST)
+	@ResponseBody
+	public int deleteDept(Long unitId,String unitName,HttpServletRequest request){
+		int result = 0;
+		if(unitId != null){
+			int status = organizeServiceInter.delUnit(unitId);
+			if(1 == status){
+				StringBuilder record = new StringBuilder("删除单位 ：");
+				record.append(unitName);
+				operationLogInter.insertOperationLog(record.toString(), request);
+			}
+			result = status;
+		}
+		return result;
+	}
+
+	@RequestMapping(value="/insert_role", method=RequestMethod.POST)
+	@ResponseBody
+	public int insertRole(Long id,String rolename,HttpServletRequest request){
+		int result = 0;
+		int status = organizeServiceInter.insertRole(id, rolename);
+		if(1 == status){
+			int type = organizeServiceInter.getTypeById(id);
+			StringBuilder record = new StringBuilder("新增角色: ");
+			record.append(rolename);
+			record.append("到 ");
+			if(0 == type){
+				record.append(organizeServiceInter.getManagementById(id).getName());
+			}else if(1 == type){
+				Long unitIdLong = organizeServiceInter.getManagementById(id).getParentId();
+				String unitNameString = organizeServiceInter.getManagementById(unitIdLong).getName();
+				String deptNameString = organizeServiceInter.getManagementById(id).getName();
+				record.append(unitNameString);
+				record.append(deptNameString);
+			}
+			operationLogInter.insertOperationLog(record.toString(), request);
+		}
+		result = status;
+		return result;
+	}
+
+	@RequestMapping(value="/insert_unit", method=RequestMethod.POST)
+	@ResponseBody
+	public int inertUnit(String unitname,String remarks,HttpServletRequest request){
+		int result = 0;
+		if(unitname != null || unitname != ""){
+			Date createTime = new Date();
+			String createPeople = UserUtil.getUserName();
+			OrganizeManagement organizeManagement = new OrganizeManagement();
+			organizeManagement.setName(unitname);
+			organizeManagement.setCreatePeople(createPeople);
+			organizeManagement.setCreateTime(createTime);
+			organizeManagement.setType(0);
+			organizeManagement.setParentId(0l);
+			organizeManagement.setStatus(false);
+			organizeManagement.setDescription(remarks);
+			result = organizeServiceInter.insertUnit(organizeManagement);
+			if(1 == result){
+				StringBuilder record = new StringBuilder("添加单位 ： ");
+				record.append(unitname);
+				operationLogInter.insertOperationLog(record.toString(), request);
+			}
+		}
+		return result;
+	}
+
+	@RequestMapping(value="/insert_dept", method=RequestMethod.POST)
+	@ResponseBody
+	public int insertDept(String unitId,String deptname,String remarks,HttpServletRequest request){
+		int result = 0;
+		if(unitId != null || unitId != ""||deptname != null||deptname!= ""
+				||remarks != null||remarks != ""){
+			Long unitIdLong = Long.parseLong(unitId);
+			Date createTime = new Date();
+			String createPeople = UserUtil.getUserName();
+			OrganizeManagement organizeManagement = new OrganizeManagement();
+			organizeManagement.setName(deptname);
+			organizeManagement.setDescription(remarks);
+			organizeManagement.setCreateTime(createTime);
+			organizeManagement.setCreatePeople(createPeople);
+			organizeManagement.setStatus(organizeServiceInter.getManagementById(unitIdLong).isStatus());
+			organizeManagement.setType(1);
+			organizeManagement.setParentId(unitIdLong);
+			int status = organizeServiceInter.insertDept(organizeManagement, unitIdLong);
+			if(1 == status){
+				StringBuilder record = new StringBuilder("添加");
+				String unitNameString = organizeServiceInter.getManagementById(unitIdLong).getName();
+				record.append(deptname);
+				record.append("到");
+				record.append(unitNameString);
+				operationLogInter.insertOperationLog(record.toString(), request);
+			}
+			result = status;
+		}
+		return result;
+	}
+
+	@RequestMapping(value="/query_dept", method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> queryDeptByDeptId(String deptId){
+		Map<String, Object> result = new HashMap<String, Object>();
+		List<Map<String, Object>> data = new ArrayList<Map<String,Object>>();
+		int userCount = 0;
+		if(deptId != null || deptId != ""){
+			Long deptIdLong = Long.parseLong(deptId);
+			Map<String, Object> map = new HashMap<String, Object>();
+			SimpleDateFormat sFormat = new SimpleDateFormat("yyyy-MM-dd");
+			OrganizeManagement organizeManagement = 
+					organizeServiceInter.getManagementById(deptIdLong);
+			String createTimeString = sFormat.format(organizeManagement.getCreateTime());
+			userCount = organizeServiceInter.getUsercountByDeptId(deptIdLong);
+			map.put("id", deptId);
+			map.put("deptname", organizeManagement.getName());
+			map.put("description", organizeManagement.getDescription());
+			map.put("usercount", userCount);
+			map.put("createTime", createTimeString);
+			map.put("status", organizeManagement.isStatus());
+			data.add(map);
+		}
+		result.put("code", 0);
+		result.put("msg", "");
+		result.put("count", userCount);
+		result.put("data", data);
+		return result;
+	}
+}

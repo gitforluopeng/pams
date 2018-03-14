@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pms.com.system.shiro.model.DAO.ShiroUserGroupRoleDao">
+	
+	<select id="loadAllForShiroGroupId" resultMap="shiroUserGroupRole" parameterType="java.lang.Long">
+		select * from shiro_user_group_roles where shiro_user_group_id=#{shiroGroupId}
+	</select>
+	
+	<resultMap type="pms.com.system.shiro.model.ShiroUserGroupRole" id="shiroUserGroupRole">
+		<id column="id" property="id"/>
+		<result column="shiro_user_group_id" property="shiroUserGroupId"/>
+		<result column="shiro_role_id" property="shiroRoleId"/>
+	</resultMap>
+	
+</mapper>

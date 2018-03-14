@@ -1,0 +1,175 @@
+﻿<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%
+String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+
+<!DOCTYPE html>
+<html lang="en" style="background-color: #DFEFEF;">
+<head>
+	<base href="<%=basePath%>">
+    <meta charset="UTF-8">
+    <title>用户信息首页</title>
+    <script src="resources/layui/layui.js"></script>
+    <link rel="stylesheet" href="resources/layui/css/layui.css">
+    <script src="resources/jquery-3.2.1.min.js"></script>
+</head>
+<body>
+ <div id="div-add-toolbar" style="width: 100%;height: 70px;background-color: #F3F3F3;">
+        <div class="layui-inline" style="font-size: 18px;margin-top: 26px;margin-left: 20px">
+        <div class="layui-inline"><img style="width:3px;height:15px;margin-bottom: 4px" src="resources/images/辅助线.png"></div>&nbsp;基本信息</div>
+        <div class="layui-inline" style="float: right;margin-top: 15px;margin-right: 40px">
+            <button id="editBtn" class="layui-btn layui-btn-danger">编辑</button>
+        </div>
+    </div>
+<div id="div-all" class="layui-form" lay-filter="selectdiv" style="margin-left: 25%;margin-top: 5%;">
+    <div id="div-form">
+        <div style="margin-top: 10px;margin-left: auto;width: 100%;" class="layui-inline">
+            <div style="margin-top: 10px;width: 100%;" class="layui-inline">
+                <div style="margin-left: 50px;height:30px;width:100px;" class="layui-inline">账&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号:
+                </div>
+                <div style="width: 250px;height:50px;margin-left: 10px" class="layui-inline">
+                <input readonly id="accountNumber" class="layui-input">
+                </div>
+                <div style="margin-left: 20px;height:30px;width:100px;" class="layui-inline">姓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名:
+                </div>
+                <div style="width: 250px;height:50px;margin-left: 10px" class="layui-inline">
+                <input readonly id="userName" class="layui-input">
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 10px;margin-left: auto;width: 100%;" class="layui-inline">
+            <div style="margin-top: 10px;width: 100%;" class="layui-inline">
+                <div style="margin-left: 50px;height:30px;width:100px;" class="layui-inline">用户编号:
+                </div>
+                <div style="width: 250px;height:50px;margin-left: 10px" class="layui-inline">
+            <input readonly id="userCode" class="layui-input" >
+                </div>
+                <div style="margin-left: 20px;height:30px;width:100px;" class="layui-inline">手机号码:
+                </div>
+                <div style="width: 250px;height:50px;margin-left: 10px" class="layui-inline">
+            <input readonly id="userPhone" class="layui-input">
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 10px;margin-left: auto;width: 100%;" class="layui-inline">
+            <div style="margin-top: 10px;width: 100%;" class="layui-inline">
+                <div style="margin-left: 50px;height:30px;width:100px;" class="layui-inline">邮箱地址:
+                </div>
+                <div style="width: 250px;height:50px;margin-left: 10px" class="layui-inline">
+            <input readonly id="userEmail" class="layui-input">
+                </div>
+                <div style="margin-left: 20px;height:30px;width:100px;" class="layui-inline">所属单位:
+                </div>
+                <div style="width: 250px;height:50px;margin-left: 10px" class="layui-inline">
+                    <input readonly id="userUntil" lay-filter="userUntil" class="layui-input">
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 10px;margin-left: auto;width: 100%;" class="layui-inline">
+            <div style="margin-top: 25px;width: 100%;" class="layui-inline">
+                <div style="margin-left: 50px;height:30px;width:100px;" class="layui-inline">所属部门:
+                </div>
+                <div style="width: 250px;height:50px;margin-left: 10px" class="layui-inline">
+                    <input readonly id="userDept" lay-filter="userDept" class="layui-input">
+                </div>
+                <div style="margin-left: 20px;height:30px;width:100px;" class="layui-inline">用户类别:
+                </div>
+                <div style="width: 250px;height:50px;margin-left: 10px" class="layui-inline">
+                    <input readonly id="userType" class="layui-input">
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 10px;margin-left: auto;width: 100%;" class="layui-inline">
+            <div style="margin-top: 25px;width: 100%;" class="layui-inline">
+                <div style="margin-left: 50px;height:30px;width:100px;" class="layui-inline">所属岗位:
+                </div>
+                <div style="width: 250px;height:50px;margin-left: 10px" class="layui-inline">
+                    <input readonly id="station" class="layui-input">
+                </div>
+                <div style="margin-left: 20px;height:30px;width:100px;" class="layui-inline">学&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;历:
+                </div>
+                <div style="width: 250px;height:50px;margin-left: 10px" class="layui-inline">
+                    <input readonly id="education" class="layui-input">
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 15px;width: 100%;" class="layui-inline">
+            <div style="margin-left: 50px;width:100px;" class="layui-inline">备注信息:</div>
+            <div style="width: 45%;height:40px;margin-left: 3px;" class="layui-inline">
+                <textarea id="remarks" style="height:140px" name="" readonly required 
+                          class="layui-textarea"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+	layui.use('form',function(){
+		var form = layui.form;
+		
+		var accountNumber = $('#accountNumber');
+		var userName = $('#userName');
+		var userCode = $('#userCode');
+		var userPhone = $('#userPhone');
+		var userEmail = $('#userEmail');
+		var userUntil = $('#userUntil');
+		var userDept = $('#userDept');
+		var userType = $('#userType');
+		var station = $('#station');
+		var education = $('#education');
+		var remarks = $('#remarks');
+		var editBtn = $('#editBtn');
+		
+		init();
+		function init(){
+			var userData = null;
+			init_data();
+			init_editBtn();
+		}
+		
+		function init_editBtn(){
+			editBtn.on('click',function(){
+				window.parent.document.data = userData;
+					parent.layer.open({
+						type : 2,
+						title : '编辑基本信息',
+						shadeClose : false,
+						shade : 0.8,
+						area : [ '80%', '70%' ],
+						content : 'systemManagement/myuser_edit', //iframe的url
+						end : function() {
+							init_data();
+						}
+					})
+			})
+		}
+		
+		function init_data(){
+			$.ajax({
+				type: 'post',
+				url: 'systemManagement/load_myuser_infos',
+				success: function (data){
+					userData = data.data;
+					window.parent.document.userMsg = userData;
+					accountNumber.val(userData.userName);
+					userName.val(userData.personName);
+					userCode.val(userData.userNumber);
+					userPhone.val(userData.userPhone);
+					userEmail.val(userData.userEmail);
+					userUntil.val(userData.unitName);
+					userDept.val(userData.deptName);
+					userType.val(userData.userType);
+					station.val(userData.stationName);
+					education.val(userData.education);
+					if(userData.otherInfo == "" || userData.otherInfo == null){
+						remarks.val("无");
+						return;
+					}
+					remarks.val(userData.otherInfo);
+				}
+			})
+		}
+	})
+</script>
+</html>

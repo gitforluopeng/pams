@@ -1,0 +1,14 @@
+package pms.com.domain.personResumeManage.model.DAO;
+
+import java.util.List;
+import java.util.Map;
+
+import pms.com.domain.personResumeManage.model.PersonResume;
+
+public interface PersonResumeDao {
+	public int addPersonResume(PersonResume personResume);
+	public int updatePersonResumeById(Map<String, Object> map);
+	public int updatePersonResumeByShiroUserId(Map<String, Object> map);
+	public int updatePersonResumeByShiroUserName(Map<String, Object> map);
+	public List<PersonResume> getPersonResume(PersonResume personResume);	
+}

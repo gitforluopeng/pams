@@ -71,7 +71,7 @@
 	</bean>
 	<bean name="fileUploadServer" scope="prototype" class="pms.com.domain.common.service.impl.FileUploadServer">
 		<property name="tempPath" value="WEB-INF/fileTemp"/>
-		<property name="savePath" value="WEB-INF/fileSave"/>
+		<property name="savePath" value="resources/fileSave"/>
 		<property name="maxFileSize" value="999999999999"></property>
 	</bean>
 </beans>

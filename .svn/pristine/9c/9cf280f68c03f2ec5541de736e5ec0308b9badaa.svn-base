@@ -1,0 +1,34 @@
+package pms.com.domain.personResumeManage.services.Imp;
+
+import java.util.List;
+
+import pms.com.domain.personResumeManage.model.PersonResume;
+import pms.com.domain.personResumeManage.services.PerSonResumeServiceInter;
+
+public class PerSonResumeServer implements PerSonResumeServiceInter {
+
+	@Override
+	public int addPersonResume(PersonResume personResume) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int updatePersonResumeById(PersonResume personResume) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int updatePersonResumeByShiroUserId(PersonResume personResume) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public List<PersonResume> getPersonResume(PersonResume personResume) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

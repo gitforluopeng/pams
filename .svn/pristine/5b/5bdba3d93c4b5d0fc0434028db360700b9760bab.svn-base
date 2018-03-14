@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pms.com.domain.systemManagement.model.DAO.OperationLogDao">
+	<select id="getAlLogsForPage" resultMap="OperationLog">
+		select * from operation_log order by operation_date DESC LIMIT #{off},#{size}
+	</select>
+	<select id="getLogsCount" resultType="Integer">
+		select count(*) from operation_log 
+	</select>
+	<select id="queryOperationLogs" resultMap="OperationLog">
+		select * from operation_log where user_name like #{username}
+		and  operation_date like #{date} order by operation_date DESC LIMIT #{off},#{limit}
+	</select>
+	<select id="queryCount" resultType="Integer">
+		select count(*) from operation_log where user_name like #{username}
+		and  operation_date like #{date}
+	</select>
+	
+	<insert id="insertOperationLog" parameterType="pms.com.domain.systemManagement.model.OperationLog"
+			useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		insert into operation_log (operation_date,ip,operation_record,operation_user,user_name)
+			values(#{operationDate},
+					#{ip},
+					#{operationRecord},
+					#{operationUser},
+					#{userName})
+	</insert>
+	
+	<resultMap type="pms.com.domain.systemManagement.model.OperationLog" id="OperationLog">
+		<id column="id" property="id"/>
+		<result column="operation_date" property="operationDate"/>
+		<result column="ip" property="ip"/>
+		<result column="operation_record" property="operationRecord"/>
+		<result column="operation_user" property="operationUser"/>
+		<result column="user_name" property="userName"/>
+	</resultMap>
+</mapper>

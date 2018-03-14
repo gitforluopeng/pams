@@ -1,0 +1,70 @@
+package pms.com.domain.systemManagement.services;
+
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
+import pms.com.domain.systemManagement.model.OperationLog;
+
+public interface OperationLogInter {
+	/**
+	 * 
+	 *
+	 * 版权信息：四川众鹏科技有限公司
+	 * Copyright (C) 2014 SCZP Information Technology Co., Ltd. All Rights Reserved
+	 *
+	 * FileName: OperationLogInter.java
+	 * Description: 传入操作日志对象,添加操作记录.返回int  0为失败,1为成功
+	 * <date> - <desc>
+	 * 2017年12月5日
+	 */
+	public int insertOperationLog(String record,HttpServletRequest request);
+	/**
+	 * 
+	 *
+	 * 版权信息：四川众鹏科技有限公司
+	 * Copyright (C) 2014 SCZP Information Technology Co., Ltd. All Rights Reserved
+	 *
+	 * FileName: OperationLogInter.java
+	 * Description: 分页查询所有操作日志
+	 * <date> - <desc>
+	 * 2017年12月5日
+	 */
+	public List<OperationLog> getAlLogsForPage(Integer pageIndex,Integer pageSize);
+	/**
+	 * 
+	 *
+	 * 版权信息：四川众鹏科技有限公司
+	 * Copyright (C) 2014 SCZP Information Technology Co., Ltd. All Rights Reserved
+	 *
+	 * FileName: OperationLogInter.java
+	 * Description: 获取所有日志条数
+	 * <date> - <desc>
+	 * 2017年12月5日
+	 */
+	public int getLogsCount();
+	/**
+	 * 
+	 *
+	 * 版权信息：四川众鹏科技有限公司
+	 * Copyright (C) 2014 SCZP Information Technology Co., Ltd. All Rights Reserved
+	 *
+	 * FileName: OperationLogInter.java
+	 * Description: 模糊分页查询日志
+	 * <date> - <desc>
+	 * 2017年12月5日
+	 */
+	public List<OperationLog> queryOperation(String username, String date, int i, Integer limit);
+	/**
+	 * 
+	 *
+	 * 版权信息：四川众鹏科技有限公司
+	 * Copyright (C) 2014 SCZP Information Technology Co., Ltd. All Rights Reserved
+	 *
+	 * FileName: OperationLogInter.java
+	 * Description: 获取查询结果个数
+	 * <date> - <desc>
+	 * 2017年12月5日
+	 */
+	public int queryCount(String username, String date);
+}

@@ -1,0 +1,14 @@
+package pms.com.domain.personResumeManage.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+@Controller
+public class PersonResumeController {
+	//管理员页面映射首页   数据载入还是请求用户的接口
+	@RequestMapping(value="/personResume_index",method=RequestMethod.GET)
+	public String loadUserPersonResumeIndex(){
+		return "pms/personResumeManage/personResume_index.jsp";
+	}
+}

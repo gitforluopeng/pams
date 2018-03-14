@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pms.com.domain.salaryManage.model.DAO.SalaryDao">
+    <sql id="queryCondition">
+        <if test="id !=null and id !=''">
+			 and t.id=#{id}
+		</if>
+		<if test="userId !=null and userId !=''">
+			 and t.userId = #{userId}
+		</if>
+		<if test="userName !=null and userName !=''">
+			 and t.userName = #{userName}
+		</if>
+		<if test="personName !=null and personName !=''">
+			 and t.personName = #{personName}
+		</if>
+		<if test="unitId !=null and unitId !=''">
+			 and t.unitId = #{unitId}
+		</if>
+		<if test="unitName !=null and unitName !=''">
+			 and t.unitName = #{unitName}
+		</if>
+		<if test="deptId !=null and deptId !=''">
+			 and t.deptId = #{deptId}
+		</if>
+		<if test="deptName !=null and deptName !=''">
+			 and t.deptName = #{deptName}
+		</if>
+		<if test="shouldPay !=null and shouldPay !=''">
+			 and t.shouldPay = #{shouldPay}
+		</if>
+		<if test="realPay !=null and realPay !=''">
+			 and t.realPay = #{realPay}
+		</if>
+		<if test="deductions !=null and deductions !=''">
+			 and t.deductions=#{deductions}
+		</if>
+		<if test="payTime !=null and payTime !=''">
+			 and t.payTime=#{payTime}
+		</if>
+		<if test="year !=null and year !=''">
+			 and t.year = #{year}
+		</if>
+		<if test="month !=null and month !=''">
+			 and t.month=#{month}
+		</if>
+		<if test="createUserId !=null and createUserId !=''">
+			 and t.createUserId=#{createUserId}
+		</if>
+		<if test="createUserName !=null and createUserName !=''">
+			 and t.createUserName=#{createUserName}
+		</if>
+		<if test="createPersonName !=null and createPersonName !=''">
+			 and t.createPersonName=#{createPersonName}
+		</if>
+		<if test="createTime !=null and createTime !=''">
+			 and t.createTime=#{createTime}
+		</if>
+    </sql>
+    <select id="getSalarys" parameterType="java.util.HashMap" resultType="pms.com.domain.salaryManage.model.Salary">
+        select t.* from salary t where 1=1
+        <include refid="queryCondition"></include>
+        order by t.year desc, t.month desc
+        <if test="pageSize !=null and pageSize !=''">
+		     limit #{startNum},#{pageSize}
+		</if>
+    </select>
+    <select id="getSalarysCount" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+        select count(1) from salary t where 1=1
+        <include refid="queryCondition"></include>
+    </select>
+    <insert id="addSalary" parameterType="pms.com.domain.salaryManage.model.Salary" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into salary (userId,userName,personName,unitId,unitName,deptId,deptName,shouldPay,realPay,deductions,payTime,year,month,createUserId,createUserName,createPersonName,createTime) values 
+        (#{userId},#{userName},#{personName},#{unitId},#{unitName},#{deptId},#{deptName},#{shouldPay},#{realPay},#{deductions},#{payTime},#{year},#{month},#{createUserId},#{createUserName},#{createPersonName},#{createTime})
+    </insert>
+    <select id="getSalarysByTime" parameterType="pms.com.domain.salaryManage.model.Salary" resultType="pms.com.domain.salaryManage.model.Salary">
+        select t.* from salary t where 1=1 and t.userId = #{userId} and t.year=#{year} and t.month=#{month}
+    </select>
+    <update id="updateSalary" parameterType="pms.com.domain.salaryManage.model.Salary">
+        update salary set shouldPay=#{shouldPay},realPay=#{realPay},deductions=#{deductions} where id=#{id}
+    </update>
+    <delete id="deleteSalary" parameterType="pms.com.domain.salaryManage.model.Salary">
+        delete from salary where id=#{id}
+    </delete>
+</mapper>

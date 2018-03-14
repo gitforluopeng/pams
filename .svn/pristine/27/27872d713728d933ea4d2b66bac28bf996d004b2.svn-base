@@ -1,0 +1,519 @@
+layui.use(['form','table','layer'],function(){
+    var form = layui.form;
+    var table = layui.table;
+    var layer = layui.layer;
+    var addBtn = $('#addBtn');
+    var queryBtn = $('#queryBtn');
+    var resetBtn = $('#resetBtn');
+    var backBtn = $('#backBtn');
+    var deptTable = $('#deptDiv');
+	var unitTable = $('#unitDiv');
+    var unitname = $('#unitname');
+    var deptname = $('#deptname');
+    var addUnitBtn = $('#addUnitBtn');
+    var context = '<div style="width: 100%;font-size: 18px">\n' +
+    '    <table id="userTable"></table>\n' +
+    '</div>';
+    
+
+
+    init();
+    function init(){
+    	pageIndexLoad();
+    	init_unit_table();
+    	init_dept_table();
+        init_addBtn();
+        init_addUnitBtn();
+        init_queryBtn();
+        init_resetBtn();
+        init_backBtn();
+        init_toolsclick();
+    }
+    
+    function init_addUnitBtn(){
+    	addUnitBtn.on('click',function(){
+    		parent.layer.open({
+                type: 2,
+                title: '新增单位',
+                shadeClose: false,
+                shade: 0.8,
+                area: ['35%', '50%'],
+                content: 'systemManagement/unit_add',
+                end: function(){
+                	loading = layer.load(1, {
+                        shade: [0.1,'#fff']
+                    });
+                	table.reload('unitReload',{
+                		done : function(){
+                			layer.close(loading);
+                		}
+                	});
+                }
+            })
+    	})
+    }
+    
+    function pageIndexLoad()
+    {
+
+        $.ajax({
+            type : "get",
+            async : true,
+            url : "systemManagement/load_all_units",
+            success : function(data) {
+            	if(data==""||data==null||data==undefined){
+            		return;
+            	}
+                var obj = $('#unitname');
+                var units=data["units"];
+                for(var i = 0;i < units.length; i++)
+                {
+                	var unitname=units[i].name;
+                	var unitid=units[i].id;
+                	var option = $('<option></option>');
+                    option.attr("value",unitid);
+                    option.html(unitname);
+                    obj.append(option);
+                }
+                form.render('select', 'selectdiv');
+            },
+            error: function(){
+                layer.msg('啊喔，数据载入出现异常了，请刷新页面试试',{icon:5});
+            }
+        });
+        form.on('select(unitname)',function (data){
+            var until = data.value;
+            var obj=$('#deptname');
+            obj.html('');
+            //var uType=$('#userType');
+            //uType.html('');
+            if(until==0){
+            	return;
+            }
+            else{
+            $.ajax({
+                type : "get",
+                async : true,
+                url : "systemManagement/load_unit_depts",
+                data:{unitId:until},
+                success : function(data) {
+                	var opt = $('<option></option>');
+                	opt.attr("value","");
+                    opt.html('请选择');
+                    obj.append(opt);
+                	if(data==""||data==null||data==undefined){
+                		return;
+                	}
+                    var depts=data["depts"];
+                    for(var i = 0;i < depts.length; i++)
+                    {
+                    	var deptname=depts[i].name;
+                    	var deptid=depts[i].id;
+                    	var option = $('<option></option>');
+                        option.attr("value",deptid);
+                        option.html(deptname);
+                        obj.append(option);
+                    }
+                    form.render('select', 'selectdiv');
+                },
+                error: function(){
+                    layer.msg('啊喔，数据载入出现异常了，请刷新页面试试',{icon:5});
+                }
+            });
+            }
+
+        });
+    }
+    
+    function init_backBtn(){
+    	backBtn.on('click',function(){
+    		unitTable.css('display','');
+        	deptTable.css('display','none');
+        	loading = layer.load(1, {
+                shade: [0.1,'#fff']
+            });
+        	table.reload('unitReload');
+        	layer.close(loading);
+        	backBtn.css('display','none');
+    	})
+    }
+
+    function init_resetBtn(){			//监听重置按钮
+        resetBtn.on('click',function(){
+            unitname.val("");
+            deptname.val("");
+            unitTable.css('display','');
+        	deptTable.css('display','none');
+        	backBtn.css('display','none');
+        	loading = layer.load(1, {
+                shade: [0.1,'#fff']
+            });
+            table.reload('unitReload');
+            var obj =$('#deptname');
+            obj.empty();
+            var opt = $('<option></option>');
+        	opt.attr("value","");
+            opt.html('请选择');
+            obj.append(opt);
+            form.render('select', 'selectdiv');
+            layer.close(loading);
+        })
+    }
+
+
+
+    function init_queryBtn(){		//监听查询按钮
+        queryBtn.on('click',function(){
+            if(unitname.val() == '' || deptname.val() == ''
+            || unitname.val() == 0 || deptname.val() == 0){
+                layer.msg('请选择查询条件!');
+                return;
+            }
+            unitTable.css('display','none');
+            deptTable.css('display','')
+            table.reload('deptReload',{
+                url: 'systemManagement/query_dept'
+                ,where: {"deptId" : deptname.val()}
+            })
+        })
+    }
+
+    function init_unit_table(){		//单位表初始化
+    	loading = layer.load(1, {
+            shade: [0.1,'#fff']
+        });
+        table.render({
+            id: 'unitReload',
+            elem: '#unitTable',
+            height: 'full-180',
+            method:'post',
+            url: 'systemManagement/load_unit',
+            page: true,
+            limits: [5,10,20],
+            cols: [[
+                {field: 'untilname', title: '单位名称',align:'center'},
+                {field: 'description', title: '职能描述',align:'center'},
+                {field: 'deptcount', title: '部门数量',align:'center'},
+                {field: 'createTime', title: '添加时间',align:'center',sort:true},
+                {field: 'use', title: '是否启用', align:'center', toolbar: '#titleTpl'},
+                {fixed: 'right', title: '操作',align:'center', field: 'right', toolbar: '#unitBar'}
+            ]],
+            done: function(){
+            	layer.close(loading);
+            }
+        })
+    }
+    
+    function init_dept_table(){	//部门表初始化
+        table.render({
+            id: 'deptReload',
+            elem: '#deptTable',
+            height: 'full-180',
+            method:'post',
+            url: '',
+            cellMinWidth: 120,
+            page: true,
+            limits: [5,10,20],
+            cols: [[
+                {field: 'deptname', title: '部门名称',align:'center'},
+                {field: 'description', title: '职能描述',align:'center'},
+                {field: 'user', title: '成员数量',align:'center',toolbar: '#count'},
+                {field: 'createTime', title: '添加时间',align:'center',sort:true},
+                {field: 'use', title: '是否启用', align:'center', toolbar: '#titleTpl'},
+                {fixed: 'right', title: '操作',width:300, align:'center', field: 'right', toolbar: '#deptBar'}
+            ]]
+        })
+    }
+    
+    function init_addBtn(){					//监听新增按钮
+        addBtn.on('click',function(){
+            parent.layer.open({
+                type: 2,
+                title: '新增部门',
+                shadeClose: false,
+                shade: 0.8,
+                area: ['35%', '50%'],
+                content: 'systemManagement/organize_add',
+                end : function (){
+                	console.info('新增完成刷新表格')
+                	loading = layer.load(1, {
+                    shade: [0.1,'#fff']
+                });
+                	table.reload('unitReload');
+                	if(window.document.unitId != null){
+                		table.reload('deptReload',{
+                			where : {"unitId" : window.document.unitId},
+                			url : 'systemManagement/load_dept'
+                		});
+                	}
+                	layer.close(loading);
+                	
+                }
+            })
+        })
+    }
+    
+    function init_toolsclick(){				//表格操作栏监听
+        table.on('tool(tabletool)',function(obj){
+            var data = obj.data;
+            var layEvent = obj.event;
+            if(layEvent == 'detail'){		//查看下级
+            	window.document.unitId = data.id;
+            	unitTable.css('display','none');
+            	deptTable.css('display','');
+            	loading = layer.load(1, {
+                    shade: [0.1,'#fff']
+                });
+            	table.reload('deptReload',{
+            		where: {"unitId" : data.id},
+            		url: 'systemManagement/load_dept',
+            		done: function(){
+            			layer.close(loading);
+            		}
+            	})
+            	backBtn.css('display','');
+            }else if(layEvent == 'unuse'){		//停用
+            	layer.confirm("确定启用吗?",function(){
+            		var _data = {"id" : data.id,"status" : false};
+            		update_status(_data);
+            	})
+            }else if(layEvent == 'use'){		//启用
+            	layer.confirm("确定停用吗?",function(){
+            		var _data = {"id" : data.id,"status" : true};
+            		update_status(_data);
+            	})
+            }else if(layEvent == 'set'){
+            	permissions(data.deptname);
+            }else if(layEvent == 'del'){		//删除
+                layer.confirm('是否删除数据', function(index) {
+                	loading = layer.load(1, {
+                        shade: [0.1,'#fff']
+                    });
+                    $.ajax({
+                        type : "post",
+                        async : true,
+                        data : {"deptId" : data.id
+                        },
+                        url : "systemManagement/delete_dept",
+                        success: function(data){
+                        	if(data == 0)
+                        		layer.mas('删除失败!,请稍后再试...',{icon:2});
+                        	if(data == 1){
+                        		layer.msg('删除成功!',{icon:1});
+                        		obj.del();
+                        	}
+                        	if(data == 2)
+                        		layer.msg('删除失败!,该部门下存在系统用户,无法进行删除操作!',{icon:2});
+                        	layer.close(loading);
+                            layer.close(index);
+                        },
+                        error: function(){
+                        	layer.mas('删除失败!,请稍后再试...',{icon:2});
+                        	layer.close(loading);
+                            layer.close(index);
+                        }
+                    });
+                });
+            }else if(layEvent == 'edit'){		//编辑
+            	edit(data.id);
+            }else if(layEvent =='addrole'){
+            	addrole(data.id);
+            }else if(layEvent == 'unitEdit'){	//编辑单位
+            	editUnit(data.id);
+            }else if(layEvent == 'unitDel'){
+            	layer.confirm('是否删除数据', function(index) { //删除单位
+                	loading = layer.load(1, {
+                        shade: [0.1,'#fff']
+                    });
+                    $.ajax({
+                        type : "post",
+                        async : true,
+                        data : {
+                        		"unitId" : data.id,
+                        		"unitName" : data.untilname
+                        },
+                        url : "systemManagement/delete_unit",
+                        success: function(data){
+                        	if(data == 0)
+                        		layer.mas('删除失败!,请稍后再试...',{icon:2});
+                        	if(data == 1){
+                        		layer.msg('删除成功!',{icon:1});
+                        		obj.del();
+                        	}
+                        	if(data == 2)
+                        		layer.msg('删除失败!,该单位下存在部门,无法进行删除操作!',{icon:2});
+                        	layer.close(loading);
+                            layer.close(index);
+                        },
+                        error: function(){
+                        	layer.mas('删除失败!,请稍后再试...',{icon:2});
+                        	layer.close(loading);
+                            layer.close(index);
+                        }
+                    });
+                });
+            }else if(layEvent == 'detailUser'){	//查看用户
+            	 window.parent.document.deptId = data.id;
+            	 window.parent.document.deptname = data.deptname;
+            	 if(data.usercount == 0){
+            		 layer.msg('该部门无成员,无法查看',{icon:2});
+            		 return;
+            	 }
+            	 layer.open({
+                     type: 1,
+                     title: window.parent.document.deptname+" 成员信息",
+                     shadeClose: false,
+                     shade: 0.8,
+                     area: ['30%', '50%'],
+                     content: context,
+                     success : function(){
+                         table.render({
+                             elem : "#userTable",
+                             id : "userTable",
+                             url : '',
+                             method : 'post',
+                             height: 'full-490',
+                             cellMinWidth: 80,
+                             page: true,
+                             limit: 5,
+                             limits: [5,10,20],
+                             cols: [[
+                                 {field: 'userName',align:'center', title: '账号'},
+                                 {field: 'personName',align:'center', title: '姓名'}
+                             ]]
+                         })
+                         loading = layer.load(1,{
+                             shade: [0.1,'#fff']
+                         });
+                         table.reload('userTable',{
+                             where : {'deptId' : window.parent.document.deptId},
+                             url: 'systemManagement/load_user',
+                             done : function(){
+                                 layer.close(loading);
+                             }
+                         })
+                     }
+                 })
+            }
+        })
+    }
+    function update_status(data){			//更改是否启用方法
+    	var imgDom = $("#"+data.id+"img");
+		var aDom = $("#"+data.id+"a");
+		var beforeStatus = data.status;
+    	loading = layer.load(1, {
+            shade: [0.1,'#fff']
+        });
+		$.ajax({
+			type: 'post',
+			url: 'systemManagement/update_status',
+			data: data,
+			success: function(data){
+				if(data.status == "success"){
+					layer.msg('修改成功',{icon:1});
+					if(!beforeStatus){
+						imgDom.attr('src','resources/images/启用.png')
+						aDom.attr('lay-event','use');
+					}else{
+						imgDom.attr('src','resources/images/不启用.png')
+	            		aDom.attr('lay-event','unuse');
+					}
+				}
+				else{
+					layer.msg('修改失败,请重试!',{icon:2});
+				}
+				layer.close(loading);
+			},
+			error: function(){
+				layer.msg('修改失败,请重试!',{icon:2});
+				layer.close(loading);
+			}
+		})
+    }
+    
+    function addrole(data){
+    	window.parent.document.id = data;
+    	parent.layer.open({
+            type: 2,
+            title: '角色管理',
+            shadeClose: false,
+            shade: 0.8,
+            area: ['20%', '49%'],
+            scrollbar: false,
+            content: 'systemManagement/add_role'
+        })
+    }
+    /*function delrole(data){
+    	window.parent.document.id = data;
+    	parent.layer.open({
+            type: 2,
+            title: '删除角色',
+            shadeClose: false,
+            shade: 0.8,
+            area: ['20%', '39%'],
+            scrollbar: false,
+            content: 'systemManagement/del_role'
+        })
+    }*/
+    
+    function permissions(data){				//部门表格权限窗口弹出
+        window.parent.document.deptName=data;
+        parent.layer.open({
+            type: 2,
+            title: '',
+            shadeClose: false,
+            shade: 0.8,
+            area: ['65%', '70%'],
+            scrollbar: false,
+            content: 'systemManagement/set_permissions',
+            end: function () {
+                table.reload('Reload');
+            }
+        })
+    }
+    function edit(data){				//部门表格编辑窗口弹出
+        console.info(data);
+    	window.parent.document.id=data;
+        parent.layer.open({
+            type: 2,
+            title: '部门编辑',
+            shadeClose: false,
+            shade: 0.8,
+            area: ['35%', '50%'],
+            content: 'systemManagement/dept_edit',
+            end: function () {
+            	loading = layer.load(1, {
+                    shade: [0.1,'#fff']
+                });
+            	table.reload('deptReload',{
+            		where: {"unitId" : window.document.unitId},
+            		url: 'systemManagement/load_dept',
+            		done: function(){
+            			layer.close(loading);
+            		}
+            	})
+            }
+        })
+    }
+    function editUnit(data){				//单位表格编辑窗口弹出
+    	window.parent.document.id=data;
+        parent.layer.open({
+            type: 2,
+            title: '单位编辑',
+            shadeClose: false,
+            shade: 0.8,
+            area: ['35%', '50%'],
+            content: 'systemManagement/unit_edit',
+            end: function () {
+            	loading = layer.load(1, {
+                    shade: [0.1,'#fff']
+                });
+            	table.reload('unitReload',{
+            		done: function(){
+            			layer.close(loading);
+            		}
+            	})
+            }
+        })
+    }
+})

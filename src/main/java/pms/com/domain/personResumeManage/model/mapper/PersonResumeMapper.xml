@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pms.com.domain.personResumeManage.model.DAO.PersonResumeDao">
+    <select id="getPersonResume" parameterType="pms.com.domain.personResumeManage.model.PersonResume" resultType="pms.com.domain.personResumeManage.model.PersonResume">
+        select t.* from personal_resume t where 1=1 and shiroUserId=#{shiroUserId}
+    </select>
+    <insert id="addPersonResume" parameterType="pms.com.domain.personResumeManage.model.PersonResume" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into personal_resume (shiroUserId,shiroUserName,chatUploadId,personName,sex,nation,address,birthday,university,education,professional,expectJob,professionalSkills,workYear,phone,email,workExperience,showYourSelf) values 
+        (#{shiroUserId},#{shiroUserName},#{chatUploadId},#{personName},#{sex},#{nation},#{address},#{birthday},#{university},#{education},#{professional},#{expectJob},#{professionalSkills},#{workYear},#{phone},#{email},#{workExperience},#{showYourSelf})
+    </insert>
+    <update id="updatePersonResumeById" parameterType="java.util.HashMap">
+		update personal_resume set id=#{id}
+		<if test="shiroUserId != null and shiroUserId != '' ">
+			,shiroUserId = #{shiroUserId}
+		</if>
+		<if test="shiroUserName != null and shiroUserName != '' ">
+			,shiroUserName = #{shiroUserName}
+		</if>
+		<if test="chatUploadId != null and chatUploadId != '' ">
+			,chatUploadId = #{chatUploadId}
+		</if>
+		<if test="personName != null and personName != '' ">
+			,personName = #{personName}
+		</if>
+		<if test="sex != null and sex != '' ">
+			,sex = #{sex}
+		</if>
+		<if test="nation != null and nation != '' ">
+			,nation = #{nation}
+		</if>
+		<if test="address != null and address != '' ">
+			,address = #{address}
+		</if>
+		<if test="birthday != null and birthday != '' ">
+			,birthday = #{birthday}
+		</if>
+		<if test="university != null and university != '' ">
+			,university = #{university}
+		</if>
+		<if test="education != null and education != '' ">
+			,education = #{education}
+		</if>
+		<if test="professional != null and professional != '' ">
+			,professional = #{professional}
+		</if>
+		<if test="expectJob != null and expectJob != '' ">
+			,expectJob = #{expectJob}
+		</if>
+		<if test="professionalSkills != null and professionalSkills != '' ">
+			,professionalSkills = #{professionalSkills}
+		</if>
+		<if test="workYear != null and workYear != '' ">
+			,workYear = #{workYear}
+		</if>
+		<if test="phone != null and phone != '' ">
+			,phone = #{phone}
+		</if>
+		<if test="email != null and email != '' ">
+			,email = #{email}
+		</if>
+		<if test="workExperience != null and workExperience != '' ">
+			,workExperience = #{workExperience}
+		</if>
+		<if test="showYourSelf != null and showYourSelf != '' ">
+			,showYourSelf = #{showYourSelf}
+		</if>
+		where id=#{id}
+	</update>
+	<update id="updatePersonResumeByShiroUserId" parameterType="java.util.HashMap">
+		update personal_resume set shiroUserId=#{shiroUserId}
+		<if test="shiroUserName != null and shiroUserName != '' ">
+			,shiroUserName = #{shiroUserName}
+		</if>
+		<if test="chatUploadId != null and chatUploadId != '' ">
+			,chatUploadId = #{chatUploadId}
+		</if>
+		<if test="personName != null and personName != '' ">
+			,personName = #{personName}
+		</if>
+		<if test="sex != null and sex != '' ">
+			,sex = #{sex}
+		</if>
+		<if test="nation != null and nation != '' ">
+			,nation = #{nation}
+		</if>
+		<if test="address != null and address != '' ">
+			,address = #{address}
+		</if>
+		<if test="birthday != null and birthday != '' ">
+			,birthday = #{birthday}
+		</if>
+		<if test="university != null and university != '' ">
+			,university = #{university}
+		</if>
+		<if test="education != null and education != '' ">
+			,education = #{education}
+		</if>
+		<if test="professional != null and professional != '' ">
+			,professional = #{professional}
+		</if>
+		<if test="expectJob != null and expectJob != '' ">
+			,expectJob = #{expectJob}
+		</if>
+		<if test="professionalSkills != null and professionalSkills != '' ">
+			,professionalSkills = #{professionalSkills}
+		</if>
+		<if test="workYear != null and workYear != '' ">
+			,workYear = #{workYear}
+		</if>
+		<if test="phone != null and phone != '' ">
+			,phone = #{phone}
+		</if>
+		<if test="email != null and email != '' ">
+			,email = #{email}
+		</if>
+		<if test="workExperience != null and workExperience != '' ">
+			,workExperience = #{workExperience}
+		</if>
+		<if test="showYourSelf != null and showYourSelf != '' ">
+			,showYourSelf = #{showYourSelf}
+		</if>
+		where shiroUserId=#{shiroUserId}
+	</update>
+	<update id="updatePersonResumeByShiroUserName" parameterType="java.util.HashMap">
+		update personal_resume set shiroUserName=#{shiroUserName}
+		<if test="shiroUserId != null and shiroUserId != '' ">
+			,shiroUserId = #{shiroUserId}
+		</if>
+		<if test="chatUploadId != null and chatUploadId != '' ">
+			,chatUploadId = #{chatUploadId}
+		</if>
+		<if test="personName != null and personName != '' ">
+			,personName = #{personName}
+		</if>
+		<if test="sex != null and sex != '' ">
+			,sex = #{sex}
+		</if>
+		<if test="nation != null and nation != '' ">
+			,nation = #{nation}
+		</if>
+		<if test="address != null and address != '' ">
+			,address = #{address}
+		</if>
+		<if test="birthday != null and birthday != '' ">
+			,birthday = #{birthday}
+		</if>
+		<if test="university != null and university != '' ">
+			,university = #{university}
+		</if>
+		<if test="education != null and education != '' ">
+			,education = #{education}
+		</if>
+		<if test="professional != null and professional != '' ">
+			,professional = #{professional}
+		</if>
+		<if test="expectJob != null and expectJob != '' ">
+			,expectJob = #{expectJob}
+		</if>
+		<if test="professionalSkills != null and professionalSkills != '' ">
+			,professionalSkills = #{professionalSkills}
+		</if>
+		<if test="workYear != null and workYear != '' ">
+			,workYear = #{workYear}
+		</if>
+		<if test="phone != null and phone != '' ">
+			,phone = #{phone}
+		</if>
+		<if test="email != null and email != '' ">
+			,email = #{email}
+		</if>
+		<if test="workExperience != null and workExperience != '' ">
+			,workExperience = #{workExperience}
+		</if>
+		<if test="showYourSelf != null and showYourSelf != '' ">
+			,showYourSelf = #{showYourSelf}
+		</if>
+		where shiroUserName=#{shiroUserName}
+	</update>
+</mapper>

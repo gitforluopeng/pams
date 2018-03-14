@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pms.com.domain.attendanceManage.model.DAO.AttendanceDao">
+    <sql id="queryCondition">
+        <if test="id !=null and id !=''">
+			 and t.id=#{id}
+		</if>
+		<if test="userId !=null and userId !=''">
+			 and t.userId = #{userId}
+		</if>
+		<if test="userName !=null and userName !=''">
+			 and t.userName = #{userName}
+		</if>
+		<if test="personName !=null and personName !=''">
+			 and t.personName = #{personName}
+		</if>
+		<if test="unitId !=null and unitId !=''">
+			 and t.unitId = #{unitId}
+		</if>
+		<if test="unitName !=null and unitName !=''">
+			 and t.unitName = #{unitName}
+		</if>
+		<if test="deptId !=null and deptId !=''">
+			 and t.deptId = #{deptId}
+		</if>
+		<if test="deptName !=null and deptName !=''">
+			 and t.deptName = #{deptName}
+		</if>
+		<if test="attendanceTime !=null and attendanceTime !=''">
+			 and t.attendanceTime = #{attendanceTime}
+		</if>
+		<if test="year !=null and year !=''">
+			 and t.year = #{year}
+		</if>
+		<if test="month !=null and month !=''">
+			 and t.month=#{month}
+		</if>
+		<if test="day !=null and day !=''">
+			 and t.day=#{day}
+		</if>
+		<if test="attendanceSituation !=null and attendanceSituation !=''">
+			 and t.attendanceSituation=#{attendanceSituation}
+		</if>
+		<if test="remark !=null and remark !=''">
+			 and t.remark=#{remark}
+		</if>
+		<if test="createUserId !=null and createUserId !=''">
+			 and t.createUserId=#{createUserId}
+		</if>
+		<if test="createUserName !=null and createUserName !=''">
+			 and t.createUserName=#{createUserName}
+		</if>
+		<if test="createPersonName !=null and createPersonName !=''">
+			 and t.createPersonName=#{createPersonName}
+		</if>
+		<if test="createTime !=null and createTime !=''">
+			 and t.createTime=#{createTime}
+		</if>
+    </sql>
+    <select id="getAttendances" parameterType="java.util.HashMap" resultType="pms.com.domain.attendanceManage.model.Attendance">
+        select t.* from attendance t where 1=1
+        <include refid="queryCondition"></include>
+        order by t.year desc, t.month desc
+        <if test="pageSize !=null and pageSize !=''">
+		     limit #{startNum},#{pageSize}
+		</if>
+    </select>
+    <select id="getAttendancesCount" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+        select count(1) from attendance t where 1=1
+        <include refid="queryCondition"></include>
+    </select>
+    <insert id="addAttendance" parameterType="pms.com.domain.attendanceManage.model.Attendance" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into attendance (userId,userName,personName,unitId,unitName,deptId,deptName,attendanceTime,year,month,day,attendanceSituation,remark,createUserId,createUserName,createPersonName,createTime) values 
+        (#{userId},#{userName},#{personName},#{unitId},#{unitName},#{deptId},#{deptName},#{attendanceTime},#{year},#{month},#{day},#{attendanceSituation},#{remark},#{createUserId},#{createUserName},#{createPersonName},#{createTime})
+    </insert>
+    <select id="getAttendancesByYMD" parameterType="pms.com.domain.attendanceManage.model.Attendance" resultType="pms.com.domain.attendanceManage.model.Attendance">
+        select t.* from attendance t where 1=1 and t.userId = #{userId} and t.year=#{year} and t.month=#{month} and t.day = #{day}
+    </select>
+</mapper>

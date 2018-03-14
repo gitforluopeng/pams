@@ -262,7 +262,7 @@ layui.use(['form','table'],function(){
         table.render({
             id: 'reload',
             elem: '#table',
-            height: 'full-180',
+            height: 'full-250',
             url: 'systemManagement/load_user_infos',
             method: 'post',
             width: 'full',

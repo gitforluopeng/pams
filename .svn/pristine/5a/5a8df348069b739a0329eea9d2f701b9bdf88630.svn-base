@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pms.com.domain.systemManagement.model.DAO.OrganizeDao">
+	<select id="getAllUnit" resultMap="OrganizeManagement">
+		select * from shiro_user_group where type = 0 LIMIT #{offerIndex},#{pageSize}
+	</select>
+	<select id="getDeptCountByUnitId" resultType="Integer" >
+		select count(*) from shiro_user_group where parent_id = #{unitId} 
+	</select>
+	<select id="getUnitCount" resultType="Integer">
+		select count(*) from shiro_user_group where type = 0
+	</select>
+	<select id="getAllUnitList" resultMap="OrganizeManagement">
+		select * from shiro_user_group where type = 0
+	</select>
+	<select id="getNoLockedUnitLists" resultMap="OrganizeManagement">
+		select * from shiro_user_group where type = 0 and status != 0
+	</select>
+	<select id="getDeptByUnitId" resultMap="OrganizeManagement">
+		select * from shiro_user_group where parent_id = #{unitId}
+	</select>
+	<select id="getNoLockedDeptByUnitId" resultMap="OrganizeManagement">
+		select * from shiro_user_group where parent_id = #{unitId} and status != 0
+	</select>
+	<select id="getAllDept" resultMap="OrganizeManagement">
+		select * from shiro_user_group where parent_id = #{unitId} LIMIT #{offerIndex},#{pageSize}
+	</select>
+	<select id="getUsercountByDeptId" resultType="Integer">
+		select count(*) from shiro_user where shiro_user_group_id = #{deptId}
+	</select>
+	<select id="isRepeatDeptName" resultType="Integer">
+		select count(*) from shiro_user_group where parent_id = #{unitId} and name =#{deptName}
+	</select>
+	<select id="getManagementById" resultMap="OrganizeManagement">
+		select * from shiro_user_group where id = #{id}
+	</select>
+	<select id="getUnitNameByparentId" resultType="java.lang.String">
+		select name from shiro_user_group where id = #{parentId}
+	</select>
+	<select id="getTypeById" resultType="Integer">
+		select type from shiro_user_group where id = #{id}
+	</select>
+	<select id="getRolesByOrganizeId" resultType="java.lang.String">
+		select name from shiro_role where id in
+		(select shiro_role_id from shiro_user_group_roles where shiro_user_group_id = #{organizeId})
+			LIMIT #{off},#{limit}
+	</select>
+	<select id="getCountForOrganizeRole" resultType="Integer">
+		select count(*) from shiro_role where id in
+		(select shiro_role_id from shiro_user_group_roles where shiro_user_group_id = #{organizeId})
+	</select>
+	<select id="getAllRoles" resultType="java.lang.String">
+		select name from shiro_role 
+	</select>
+	<select id="getRolesByUnitId" resultType="java.lang.String">
+		select name from shiro_role where id in
+		(select shiro_role_id from shiro_user_group_roles where shiro_user_group_id = #{organizeId})
+	</select>
+	<select id="getAllDeptByUnitIdList" resultMap="OrganizeManagement">
+		select * from shiro_user_group where parent_id = #{unitId}
+	</select>
+	<select id="getUserIdByDeptId" resultType="java.lang.Long">
+		select id from shiro_user where shiro_user_group_id = #{deptId}
+	</select>
+	<select id="getUserRoleName" resultType="java.lang.String">
+		select name from shiro_role where id = (select shiro_role_id from shiro_user_roles where shiro_user_id = #{userId})
+	</select>
+	<select id="getRoleId" resultType="java.lang.Long">
+		select id from shiro_role where name = #{rolename}
+	</select>
+	<select id="getDeptNameByUnitId" resultType="java.lang.String">
+		select name from shiro_user_group where parent_id = #{unitId}
+	</select>
+	<select id="getCountByUnitName" resultType="Integer">
+		select count(*) from shiro_user_group where type = 0 and name = #{unitName}
+	</select>
+	<select id="getAllUnitNopage" resultMap="OrganizeManagement">
+		select * from shiro_user_group where type = 0
+	</select>
+	
+	<delete id="delGroupRolesByDeptId">
+		delete from shiro_user_group_roles where shiro_user_group_id = #{deptId}
+	</delete>
+	<delete id="delGroupByDeptId">
+		delete from shiro_user_group where id = #{deptId}
+	</delete>
+	<delete id="deleteRole">
+		delete from shiro_user_group_roles where shiro_user_group_id =#{organizeId} and
+		 shiro_role_id =(select id from shiro_role where name = #{rolename})
+	</delete>
+	
+	<update id="updateStatus">
+		update shiro_user_group set status = #{status} where id = #{id}
+	</update>
+	<update id="updateDept">
+		update shiro_user_group set name = #{deptName},description = #{description},
+				modfiy_people = #{modfiyPeople},modfiy_time = #{modfiyDate}
+				where id = #{deptId}
+	</update>
+	<update id="updateUnit">
+		update shiro_user_group set name = #{unitName},description = #{description},
+				modfiy_people = #{modfiyPeople},modfiy_time = #{modfiyDate}
+				where id = #{unitId}
+	</update>
+	<update id="setDeptsByParentId">
+		update shiro_user_group set status = #{status} where parent_id = #{parentId}
+	</update>
+	
+	<insert id="insertDept" parameterType="pms.com.domain.systemManagement.model.OrganizeManagement"
+			useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		insert into shiro_user_group 
+		(name,type,parent_id,status,create_people,create_time,modfiy_people,modfiy_time,description)
+			values(#{name},
+					#{type},
+					#{parentId},
+					#{status},
+					#{createPeople},
+					#{createTime},
+					#{modfiyPeople},
+					#{modfiyTime},
+					#{description})
+	</insert>
+	<insert id="insertGroupRoles" >
+		insert into shiro_user_group_roles 
+		(shiro_user_group_id,shiro_role_id)
+			values(#{deptId},2)
+	</insert>
+	<insert id="insertRole" >
+		insert into shiro_user_group_roles 
+		(shiro_user_group_id,shiro_role_id)
+			values(#{organizeId},#{roleId})
+	</insert>
+	
+	<resultMap type="pms.com.domain.systemManagement.model.OrganizeManagement" id="OrganizeManagement">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="type" property="type"/>
+		<result column="parent_id" property="parentId"/>
+		<result column="status" property="status"/>
+		<result column="create_people" property="createPeople"/>
+		<result column="modfiy_time" property="modfiyTime"/>
+		<result column="modfiy_people" property="modfiyPeople"/>
+		<result column="create_time" property="createTime"/>
+	</resultMap>
+	
+</mapper>

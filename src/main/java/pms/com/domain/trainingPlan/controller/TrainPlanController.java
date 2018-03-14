@@ -37,6 +37,11 @@ public class TrainPlanController {
 		return "pms/trainPlanManage/trainPlan_add.jsp";
 	}
 	
+	@RequestMapping(value="/trainPlan_edit",method=RequestMethod.GET)
+	public String loadTrainPlanEditPage(){
+		return "pms/trainPlanManage/trainPlan_edit.jsp";
+	}
+	
 	@RequestMapping(value="/load_trainPlans",method=RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> loadTrainPlans(@BeanParam TrainPlan trainPlan , Integer page , Integer limit){

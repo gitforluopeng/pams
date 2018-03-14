@@ -1,0 +1,74 @@
+package pms.com.domain.systemManagement.model.DAO;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import pms.com.domain.systemManagement.model.OperationLog;
+
+public interface OperationLogDao {
+	/**
+	 * 
+	 *
+	 * 版权信息：四川众鹏科技有限公司
+	 * Copyright (C) 2014 SCZP Information Technology Co., Ltd. All Rights Reserved
+	 *
+	 * FileName: OperationLogDao.java
+	 * Description: 传入操作日志对象 ,添加一条操作记录
+	 * <date> - <desc>
+	 * 2017年12月5日
+	 */
+	public int insertOperationLog(OperationLog operationLog);
+	/**
+	 * 
+	 *
+	 * 版权信息：四川众鹏科技有限公司
+	 * Copyright (C) 2014 SCZP Information Technology Co., Ltd. All Rights Reserved
+	 *
+	 * FileName: OperationLogDao.java
+	 * Description: 分页查询出所有操作日志
+	 * <date> - <desc>
+	 * 2017年12月5日
+	 */
+	public List<OperationLog> getAlLogsForPage(@Param("off")Integer off,@Param("size")Integer size);
+	/**
+	 * 
+	 *
+	 * 版权信息：四川众鹏科技有限公司
+	 * Copyright (C) 2014 SCZP Information Technology Co., Ltd. All Rights Reserved
+	 *
+	 * FileName: OperationLogDao.java
+	 * Description: 获取操作日志条数
+	 * <date> - <desc>
+	 * 2017年12月5日
+	 */
+	public int getLogsCount();
+	/**
+	 * 
+	 *
+	 * 版权信息：四川众鹏科技有限公司
+	 * Copyright (C) 2014 SCZP Information Technology Co., Ltd. All Rights Reserved
+	 *
+	 * FileName: OperationLogDao.java
+	 * Description: 模糊分页查询日志
+	 * <date> - <desc>
+	 * 2017年12月5日
+	 */
+	public List<OperationLog> queryOperationLogs(
+			@Param("username")String username,@Param("date")String date, 
+			@Param("off")int i, @Param("limit")Integer limit);
+	/**
+	 * 
+	 *
+	 * 版权信息：四川众鹏科技有限公司
+	 * Copyright (C) 2014 SCZP Information Technology Co., Ltd. All Rights Reserved
+	 *
+	 * FileName: OperationLogDao.java
+	 * Description: 获取模糊查询个数
+	 * <date> - <desc>
+	 * 2017年12月5日
+	 */
+	public int queryCount(@Param("username")String username,@Param("date")String date);
+	
+	public String getUserNameByCount(String userName);
+}

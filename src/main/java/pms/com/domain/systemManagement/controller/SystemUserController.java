@@ -25,6 +25,7 @@ import pms.com.system.shiro.annotate.BeanParam;
 import pms.com.system.shiro.model.ShiroRole;
 import pms.com.system.shiro.model.ShiroUser;
 import pms.com.system.shiro.model.ShiroUserGroupRole;
+import pms.com.system.shiro.util.UserUtil;
 
 
 @Controller
@@ -265,5 +266,42 @@ public class SystemUserController {
 				return result;
 			}
 		}	
+	}
+	
+	//普通用户系统请求我的信息页面映射
+	@RequestMapping(value="/myuser_index",method=RequestMethod.GET)
+	public String loadMyUserIndex(){
+		return baseUrl+"myuser_index.jsp";
+	}
+	
+	//普通用户编辑我的信息页面映射
+	@RequestMapping(value="/myuser_edit",method=RequestMethod.GET)
+	public String loadMyUserEdit(){
+		return baseUrl+"myuser_edit.jsp";
+	}
+	
+	//普通用户请求我的信息的数据
+	@RequestMapping(value="/load_myuser_infos",method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> loadMyUserInfos(){
+		Map<String, Object> result = new HashMap<String, Object>();
+		MyUser myUser=systemUserServer.getUserByShiroUserId(UserUtil.getShiroUser().getId());
+		result.put("data", myUser);
+		return result;
+	}
+	//普通用户修改我的信息
+	@RequestMapping(value="/update_myuser",method=RequestMethod.POST)
+	@ResponseBody
+	public String updateMyUser(@BeanParam ShiroUser shiroUser,String unEditUsername,String password,@BeanParam SystemUser systemUser,@BeanParam MyShiroUserGroupRole myShiroUserGroupRole,HttpServletRequest request){
+		JSONObject json = new JSONObject();
+		int status=-1;
+		status=systemUserServer.updateSystemUser(shiroUser, unEditUsername, password, systemUser, myShiroUserGroupRole);
+		json.put("status", status);
+		if(1 == status){
+			StringBuilder record = new StringBuilder("编辑用户:");
+			record.append(unEditUsername);
+			operationLogInter.insertOperationLog(record.toString(), request);
+		}
+		return json.toString();	
 	}
 }

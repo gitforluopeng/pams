@@ -18,6 +18,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import pms.com.system.shiro.annotate.BeanParam;
 import pms.com.system.shiro.exception.BeanResovleParamterException;
 import pms.com.utils.LoggerUtil;
+import pms.com.utils.StringUtil;
 
 public class BeanResovleParamter implements HandlerMethodArgumentResolver {
 	
@@ -56,7 +57,8 @@ public class BeanResovleParamter implements HandlerMethodArgumentResolver {
 			if(!StringUtils.isEmpty(value)){
 				Object objValue = null;
 				if(fieldTypeName.equals(Date.class.getName())){
-					objValue = dateFormat.parse(value);
+					LoggerUtil.consleLogger.info("日期的值为："+value);
+					objValue = dateFormat.parse(StringUtil.addHMS(value));
 				}else if(fieldTypeName.equals(Double.class.getName())){
 					objValue = Double.parseDouble(value);
 				}else if(fieldTypeName.equals(Float.class.getName())){

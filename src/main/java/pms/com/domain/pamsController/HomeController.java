@@ -42,16 +42,14 @@ public class HomeController {
 		ShiroUser user = (ShiroUser)SecurityUtils.getSubject().getPrincipal();
 		MyUser myUser = systemUserService.getUserByShiroUserId(user.getId());
 		String role = null;
-		if(SecurityUtils.getSubject().hasRole("公诉人")){
-			role = "公诉人";
-		}else if(SecurityUtils.getSubject().hasRole("指挥中心")){
-			role = "指挥中心";
+		if(SecurityUtils.getSubject().hasRole("admin")){
+			role = "admin";
+		}else if(SecurityUtils.getSubject().hasRole("user")){
+			role = "user";
 		}
-		SystemName systemName = systemNameService.getSystemNameByIsUse();
 		modelAndView.addObject("myUser", myUser);
 		modelAndView.addObject("role",role);
 		modelAndView.addObject("user", user);
-		modelAndView.addObject("systemName", systemName.getName());
 		modelAndView.setViewName("pms/home.jsp");
 		return modelAndView;
 	}

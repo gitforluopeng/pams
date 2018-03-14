@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pms.com.system.shiro.model.DAO.ShiroResourcesDao">
+	
+	<select id="loadAllForShiroRoleIds" parameterType="java.util.List" resultMap="shiroResources">
+		SELECT
+			*
+		FROM
+			shiro_resources sr
+		WHERE
+		sr.id IN (
+			SELECT
+			DISTINCT srr.shiro_resources_id
+			FROM
+			shiro_resources_roles srr
+			WHERE
+			srr.shiro_role_id IN
+			<foreach collection="list" item="shiroRoleId" open="(" separator="," close=")">
+				#{shiroRoleId}
+			</foreach>
+		)	
+	</select>
+	
+	<select id="loadAllByShiroRoleId" parameterType="java.lang.Long" resultMap="shiroResources">
+		SELECT
+			sr.*,srr.shiro_role_id AS shiro_role_id 
+		FROM
+			shiro_resources sr 
+		LEFT JOIN shiro_resources_roles srr ON sr.id = srr.shiro_resources_id
+		WHERE srr.shiro_role_id=#{shiroRoleId}
+		
+	</select>
+	
+	<select id="loadAllShiroResources" resultMap="shiroResources">
+		SELECT
+		sr.*, srr.shiro_role_id AS shiro_role_id
+		FROM
+		shiro_resources sr
+		LEFT JOIN shiro_resources_roles srr ON sr.id = srr.shiro_resources_id
+	</select>
+	
+	<select id="loadAllShiroResourcesByRoleId" resultMap="shiroResources">
+		SELECT * FROM shiro_resources
+	</select>
+	
+	<select id="loadMenus" parameterType="java.util.List" resultMap="shiroResources">
+		SELECT
+			*
+		FROM
+			shiro_resources sr
+		WHERE 
+		sr.type_id=1 
+		AND
+		sr.id IN (
+			SELECT
+			DISTINCT srr.shiro_resources_id
+			FROM
+			shiro_resources_roles srr
+			WHERE
+			srr.shiro_role_id IN
+			<foreach collection="list" item="shiroRoleId" open="(" separator="," close=")">
+				#{shiroRoleId}
+			</foreach>
+		)
+	</select>
+	
+	<resultMap type="pms.com.system.shiro.model.ShiroResources" id="shiroResources">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="url" property="url"/>
+		<result column="show_order" property="showOrder"/>
+		<result column="parent_id" property="parentId"/>
+		<result column="shiro_role_id" property="shiroRoleId"/>
+		<result column="type_id" property="type"/>
+	</resultMap>
+	
+</mapper>

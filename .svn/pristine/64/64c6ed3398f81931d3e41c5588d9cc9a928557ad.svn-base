@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pms.com.domain.systemManagement.model.DAO.SystemNameDao">
+    <insert id="addSystemName" parameterType="pms.com.domain.systemManagement.model.SystemName" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into system_name (system_name,create_user,create_time,change_user,change_date) values 
+        (#{name},#{createUser},#{createTime},#{changeUser},#{changeTime})
+    </insert>
+    <update id="updateSystemName" parameterType="pms.com.domain.systemManagement.model.SystemName">
+        update system_name set system_name=#{name},change_user=#{changeUser},change_date=#{changeTime} where id=#{id}
+    </update>
+    <update id="updateSystemIsUse" parameterType="pms.com.domain.systemManagement.model.SystemName">
+        update system_name set change_user=#{changeUser},change_date=#{changeTime},status_value=#{isUse} where id=#{id}
+    </update>
+    <delete id="deleteSystemName" parameterType="pms.com.domain.systemManagement.model.SystemName">
+        delete from system_name where id=#{id}
+    </delete>
+    <select id="getAllSystemName" resultMap="systemName">
+        select * from system_name limit #{pageIndex},#{pageSize}
+    </select>
+    <select id="getSystemNameCount" resultType="java.lang.Integer">
+        select count(*) from system_name
+    </select>
+    <select id="getSystemNameByIsUse" parameterType="pms.com.domain.systemManagement.model.SystemName" resultMap="systemName">
+        select * from system_name where status_value = #{isUse}
+    </select>
+    <select id="getSystemNameByName" parameterType="pms.com.domain.systemManagement.model.SystemName" resultMap="systemName">
+        select * from system_name where system_name=#{name}
+    </select>
+    <resultMap type="pms.com.domain.systemManagement.model.SystemName" id="systemName">
+        <id column="id" property="id"></id>
+        <result column="system_name" property="name"/>
+        <result column="create_user" property="createUser"/>
+        <result column="create_time" property="createTime"/>
+        <result column="change_user" property="changeUser"/>
+        <result column="change_date" property="changeTime"/>
+        <result column="status_value" property="isUse"/>
+    </resultMap>
+</mapper>

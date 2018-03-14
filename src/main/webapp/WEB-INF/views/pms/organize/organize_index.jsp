@@ -41,10 +41,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     <div id="div-add-toolbar" style="width: 100%;height: 70px;background-color: #F3F3F3;">
         <div class="layui-inline" style="font-size: 18px;margin-top: 26px;margin-left: 20px">
 			<div class="layui-inline"><img style="width:3px;height:15px;margin-bottom: 4px" src="resources/images/辅助线.png"></div>&nbsp;数据列表</div>
-        <div class="layui-inline" style="float: right;margin-top: 15px;margin-right: 20px">
+        <div class="layui-inline" style="float: right;margin-top: 15px;margin-right: 40px">
         	<button id="backBtn" class="layui-btn layui-btn-normal" style="display:none;">返回上一级</button>
             <button id="addBtn" class="layui-btn layui-btn-danger">添加部门</button>
-            <button id="addUnitBtn" class="layui-btn layui-btn-danger">添加单位</button>
         </div>
     </div>
         <div id="div-table" style="width: 98%;margin-left: 10px;margin-right: 10px">

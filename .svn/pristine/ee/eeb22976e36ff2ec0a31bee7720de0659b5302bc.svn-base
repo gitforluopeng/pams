@@ -1,0 +1,78 @@
+package pms.com.domain.personResumeManage.services.Imp;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.springframework.stereotype.Service;
+
+import pms.com.domain.personResumeManage.model.PersonResume;
+import pms.com.domain.personResumeManage.model.DAO.PersonResumeDao;
+import pms.com.domain.personResumeManage.services.PerSonResumeServiceInter;
+import pms.com.system.shiro.util.UserUtil;
+import pms.com.utils.LoggerUtil;
+@Service
+public class PerSonResumeServer implements PerSonResumeServiceInter {
+	
+	@Resource
+	private SqlSessionFactory sessionFactory;
+	
+	@Override
+	public int addPersonResume(PersonResume personResume) {
+		SqlSession session = sessionFactory.openSession();
+		PersonResumeDao personResumeDao=session.getMapper(PersonResumeDao.class);
+		personResume.setShiroUserId(UserUtil.getShiroUser().getId());
+		personResume.setShiroUserName(UserUtil.getUserName());
+		if (!personResumeDao.getPersonResume(personResume).isEmpty()) {
+			return 0;
+		}
+		int result=-1;
+		try {
+			int status=personResumeDao.addPersonResume(personResume);
+			if (status<=0) {
+				session.rollback();
+			}
+			else {
+				session.commit();
+				result=1;
+			}
+		} catch (Exception e) {
+			session.rollback();
+			LoggerUtil.consleLogger.error(e);
+		} finally {
+			try {
+				session.close();
+			} catch (Exception e) {
+				LoggerUtil.consleLogger.error(e);
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public int updatePersonResumeById(PersonResume personResume) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int updatePersonResumeByShiroUserId(PersonResume personResume) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	@Override
+	public int updatePersonResumeByShiroUserName(PersonResume personResume) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	@Override
+	public PersonResume getPersonResume(PersonResume personResume) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

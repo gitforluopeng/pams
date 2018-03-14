@@ -1,0 +1,111 @@
+﻿<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%
+String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+
+<!DOCTYPE html>
+<html lang="en" style="overflow-x: hidden; overflow-y: hidden;">
+<head>
+	<base href="<%=basePath%>">
+    <meta charset="UTF-8">
+    <title>发布奖惩信息</title>
+    <script src="resources/layui/layui.js"></script>
+    <link rel="stylesheet" href="resources/layui/css/layui.css">
+    <script src="resources/jquery-3.2.1.min.js"></script>
+</head>
+<body>
+<div class="layui-form" id="div-all" lay-filter="selectdiv">
+    <div id="div-form">
+        <div style="margin-top: 25px;width: 100%;" class="layui-inline">
+            <div style="margin-left: 10%;width:70px;" class="layui-inline"> <span style="color: red">*&nbsp;</span>信息类型:</div>
+            <div style="width: 350px;height:40px;margin-left: 18px" class="layui-inline">
+                <select id="infosType" class="layui-select">
+                	<option value="">请选择</option>
+                	<option value="1">奖励</option>
+                	<option value="2">处分</option>
+                </select>
+            </div>
+        </div>
+        <div style="margin-top: 25px;width: 100%;" class="layui-inline">
+            <div style="margin-left: 10%;width:70px;" class="layui-inline"> <span style="color: red">*&nbsp;</span>信息内容:</div>
+            <div style="width: 351px;height:40px;margin-left: 18px;" class="layui-inline">
+                <textarea id=infoContent style="height:140px" required  placeholder="请输入内容" class="layui-textarea"></textarea>
+            </div>
+        </div>
+    </div>
+    <div id="div-btn" style="width: 600px;height: 58px">
+        <div class="layui-inline" style="margin-left:39%;margin-top:20%;">
+            <button id="saveBtn" class="layui-btn layui-btn-normal">保存</button>
+            <button id="closeBtn" class="layui-btn layui-btn-primary">关闭</button>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+	layui.use('form',function(){
+		var form = layui.form;
+		
+		var infosType = $('#infosType');
+		var infoContent = $('#infoContent');
+		var saveBtn = $('#saveBtn');
+		var closeBtn = $('#closeBtn');
+		
+		
+		init();
+		function init(){
+			init_closeBtn();
+			init_saveBtn();
+		} 
+		
+		function init_closeBtn(){
+			closeBtn.on('click',function(){
+				var index = parent.layer.getFrameIndex(window.name);
+				parent.layer.close(index);
+			})
+		}
+		
+		function init_saveBtn(){
+			var infosData = window.parent.document.data;
+			saveBtn.on('click',function(){
+				if(infosType.val() == ""){
+					layer.msg("请选择信息类型！",{icon : 2});
+					return;
+				}
+				if(infoContent.val() == "" || infoContent.val() == null){
+					layer.msg("请输入信息内容",{icon : 2});
+					return;
+				}
+				$.ajax({
+					type: 'post',
+					url: 'infosManagement/add_infos',
+//http://localhost:8080/pams/infosManagement/add_infos?infos.userId=1&infos.userName=libo&infos.personName=李波&infos.unitId=2&infos.unitName=成都法院&infos.deptId=3&infos.deptName=法务部&infos.infoType=1&infos.infoContent=测试奖励
+					data: {
+						"infos.userId": infosData.shiroUserId,
+						"infos.userName": infosData.userName,
+						"infos.personName": infosData.personName,
+						"infos.unitId": infosData.unitId,
+						"infos.unitName": infosData.unitName,
+						"infos.deptId": infosData.deptId,
+						"infos.deptName": infosData.deptName,
+						"infos.infoType": infosType.val(),
+						"infos.infoContent": infoContent.val()
+					},
+					success: function(data){
+						if(data.status == 1){
+							var index = parent.layer.getFrameIndex(window.name);
+							parent.layer.close(index);
+							parent.layer.msg("保存成功！",{icon : 1});
+						} else if(data.status == -1){
+							layer.msg("保存失败！请稍后再试。。。",{icon : 2});
+						}
+					},
+					error: function(){
+							layer.msg("保存失败！请联系管理员",{icon : 2});
+					}
+				})
+			})
+		}
+	})
+</script>
+</html>

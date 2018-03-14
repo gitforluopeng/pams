@@ -20,11 +20,11 @@
 		<if test="trainContent !=null and trainContent !=''">
 			 and t.trainContent like CONCAT(CONCAT('%', #{trainContent}), '%')
 		</if>
-		<if test="startTime !=null and startTime !=''">
-			 and t.startTime &gt;= #{startTime}
+		<if test="startTime !=null">
+			 and t.startTime &gt;= #{startTime,jdbcType=TIMESTAMP}
 		</if>
-		<if test="endTime !=null and endTime !=''">
-			 and t.endTime &lt;= #{endTime}
+		<if test="endTime !=null">
+			 and t.endTime &lt;= #{endTime,jdbcType=TIMESTAMP}
 		</if>
 		<if test="createUserId !=null and createUserId !=''">
 			 and t.createUserId=#{createUserId}

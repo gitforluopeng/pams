@@ -1,0 +1,228 @@
+﻿<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%
+String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<base href="<%=basePath%>">
+    <meta charset="UTF-8">
+    <title>简历信息</title>
+    <script src="resources/layui/layui.js"></script>
+    <link rel="stylesheet" href="resources/layui/css/layui.css">
+    <script src="resources/jquery-3.2.1.min.js"></script>
+</head>
+<style>
+    tr{
+        text-align: center;
+    }
+</style>
+<body>
+<div id="div-add-toolbar" style="width: 100%;height: 70px;background-color: #F3F3F3;">
+        <div class="layui-inline" style="font-size: 18px;margin-top: 26px;margin-left: 20px">
+        <div class="layui-inline"><img style="width:3px;height:15px;margin-bottom: 4px" src="resources/images/辅助线.png"></div>&nbsp;简历信息</div>
+        <div class="layui-inline" style="float: right;margin-top: 15px;margin-right: 40px">
+            <button id="addBtn" class="layui-btn layui-btn-danger">创建简历</button>
+            <button id="editBtn" class="layui-btn layui-btn-danger">修改简历</button>
+            <button id="downloadBtn" class="layui-btn layui-btn-danger">下载简历</button>
+        </div>
+    </div>
+<div style="margin-left: 10%;width: 80%;height: 80%;" class="layui-form">
+	
+    <div id="table" style="margin-left: 20%;height: 70%;" class="layui-inline">
+        <table class="layui-table" border="1">
+            <tr >
+                <td>姓名：</td>
+                <td><input readonly class="layui-input" id="personName"></td>
+                <td>性别：</td>
+                <td><input readonly class="layui-input" id="sex"></td>
+                <td rowspan="6">
+                    <p style="text-align: center">图片信息：</p>
+                    <div style="border: solid 1px;width: 200px;height: 200px;"><img id="img" height="200" width="300"></div>
+                </td>
+            </tr>
+            <tr >
+                <td>民族：</td>
+                <td><input readonly class="layui-select" id="nation"></td>
+                <td>籍贯：</td>
+                <td><input readonly id="address" class="layui-input"></td>
+            </tr>
+            <tr>
+                <td>出生年月：</td>
+                <td><input readonly id="birthday" class="layui-input"></td>
+                <td>学历：</td>
+                <td><input readonly class="layui-input" id="education"></td>
+            </tr>
+            <tr>
+                <td>毕业院校：</td>
+                <td><input readonly id="university" class="layui-input"></td>
+                <td>专业：</td>
+                <td><input readonly class="layui-input" id="professional"></td>
+            </tr>
+            <tr>
+                <td>电话：</td>
+                <td><input readonly id="phone" class="layui-input"></td>
+                <td>邮箱：</td>
+                <td><input readonly class="layui-input" id="email"></td>
+            </tr>
+            <tr>
+                <td>工作年限：</td>
+                <td><input readonly id="workYear" class="layui-input"></td>
+                <td>面试职位：</td>
+                <td><input readonly class="layui-input" id="expectJob"></td>
+            </tr>
+            <tr>
+               <td colspan="5">
+                  <p style="text-align: left">专业技能：</p>
+                   <textarea readonly id="professionalSkills" class="layui-textarea"></textarea>
+               </td>
+            </tr>
+            <tr>
+                <td colspan="5">
+                    <p style="text-align: left">工作经历：</p>
+                    <textarea readonly id="workExperience" class="layui-textarea"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="5">
+                    <p style="text-align: left">简短的描述你自己：</p>
+                    <textarea readonly id="showYourSelf" class="layui-textarea"></textarea>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+</body>
+<script>
+    layui.use(['form'],function(){
+        var form = layui.form;
+        
+        var img = $('#img');
+        var table = $('#table');
+        
+        var addBtn = $('#addBtn');
+        var editBtn = $('#editBtn');
+        var downloadBtn = $('#downloadBtn');
+        
+        var personName = $('#personName');
+        var sex = $('#sex');
+        var address = $('#address');
+        var birthday = $('#birthday');
+        var university = $('#university');
+        var professional = $('#professional');
+        var nation = $('#nation');
+        var phone = $('#phone');
+        var workYear = $('#workYear');
+        var expectJob = $('#expectJob');
+        var professionalSkills = $('#professionalSkills');
+        var workExperience = $('#workExperience');
+        var showYourSelf = $('#showYourSelf');
+        var education = $('#education');
+        var email = $('#email');
+
+        init();
+        function init(){
+        	init_data();
+        	init_addBtn();
+        	init_editBtn();
+        	init_dowloadBtn();
+        }
+        
+        function init_data(){
+        	$.ajax({
+        		type: 'get',
+        		url: 'personResumeManage/load_personResume',
+        		success: function (data){
+        			if(data.status == 1){
+        			var personMsg = data.personResume;
+        			var fileInfo = data.updoadFile;
+        			personName.val(personMsg.personName);
+        			sex.val(personMsg.sex);
+        			address.val(personMsg.address);
+        			birthday.val(personMsg.birthday);
+        			university.val(personMsg.university);
+        			professional.val(personMsg.professional);
+        			phone.val(personMsg.phone);
+        			workYear.val(personMsg.workYear);
+        			expectJob.val(personMsg.expectJob);
+        			professionalSkills.val(personMsg.professionalSkills);
+        			workExperience.val(personMsg.workExperience);
+        			showYourSelf.val(personMsg.showYourSelf);
+        			education.val(personMsg.education);
+        			email.val(personMsg.email);
+        			nation.val(personMsg.nation);
+        			img.attr("src","resources/fileSave/"+fileInfo.filePath);
+        			addBtn.hide();
+        			editBtn.show();
+        			downloadBtn.show();
+        			table.css("display","");
+        			} else {
+        				parent.layer.msg("您还未创建简历！请添加。。。",{icon : 2});
+        				editBtn.hide();
+        				downloadBtn.hide();
+        				addBtn.show();
+        				table.css("display","none");
+        			}
+        		}
+        	})
+        }
+        
+        function init_addBtn(){
+        	addBtn.on('click',function(){
+        		parent.layer.open({
+						type : 2,
+						title : '添加简历',
+						shadeClose : false,
+						shade : 0.8,
+						area : [ '80%', '85%' ],
+						content : 'personResumeManage/personResume_add', //iframe的url
+						end : function() {
+							init_data();
+						}
+					})
+        	})
+        }
+        
+        function init_editBtn(){
+        	editBtn.on('click',function(){
+        		parent.layer.open({
+						type : 2,
+						title : '编辑简历信息',
+						shadeClose : false,
+						shade : 0.8,
+						area : [ '80%', '85%' ],
+						content : 'personResumeManage/personResume_update', //iframe的url
+						end : function() {
+							init_data();
+						}
+					})
+        	})
+        }
+        
+        function init_dowloadBtn(){
+        	downloadBtn.on('click',function(){
+        		ajaxDownload("","get","personResumeManage/down_file",$);
+        	})
+        }
+        
+        function ajaxDownload(params,method,url,$){
+		var dowform = document.createElement("form");
+		dowform.setAttribute('action',url);
+		dowform.setAttribute('method', method);
+		for(key in params){
+			console.info(dowform.innerHTML);
+			var input = document.createElement("input");
+			input.setAttribute('name', key);
+			input.value = params[key];
+			dowform.appendChild(input);
+		}
+		dowform.setAttribute("style", "display: none");
+		$(dowform).appendTo('body');
+		dowform.submit();
+	}
+        
+    })
+</script>
+</html>

@@ -1,128 +1,277 @@
-<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+﻿<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%
-String path = request.getContextPath();
-String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+	String path = request.getContextPath();
+	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+			+ path + "/";
 %>
 
 <!DOCTYPE html>
-<html style="height: 100%; overflow-x: hidden; overflow-y: hidden;">
-  <head>
-    <base href="<%=basePath%>">
-    
-    <title>主页</title>
-    
-	<link rel="stylesheet" href="resources/layui/css/layui.css"  media="all">
-	<script type="text/javascript" src="resources/layui/layui.js"></script>
-	<script type="text/javascript" src="resources/home/script/mainView.js"></script>
-	
-	 <style>
-        .hover:hover{
-            background-color: #017be3;
-        }
-        #check::-webkit-input-placeholder { 
-            color: #a3e4ff;
-        }
-        #check:-moz-placeholder {
-            color: #a3e4ff;
-        }
-        #check::-moz-placeholder {
-            color: #a3e4ff;
-        }
-        #check:-ms-input-placeholder {
-            color: #a3e4ff;
-        }
-    </style>
-	
+<html lang="en">
+<head>
+	<base href="<%=basePath%>">
+    <meta charset="UTF-8">
+    <title>人事档案管理系统</title>
+   	<script src="resources/layui/layui.js"></script>
+    <link rel="stylesheet" href="resources/layui/css/layui.css">
+    <script src="resources/jquery-3.2.1.min.js"></script>
 </head>
-  
-<body style="height: 100%;overflow-y: hidden;">
-<div id="div-toubu" class="layui-header" style="width: 100%;height: 93px;background-color: #008cef">
-    <div id="div-logo" class="layui-inline" style="margin-top: 12px;margin-left: 30px;">
-        <img style="height: 60px" height="60" width="58.5" src="resources/images/mini.png">
-    </div>
-    <div id="div-fuzhu" class="layui-inline" style="margin-left: 10px;margin-top: 15px">
-        <img style="" src="resources/images/辅助线2.png">
-    </div>
-    <div id="div-font" style="margin-top: 6px;margin-left: 15px; margin-right: 30px" class="layui-inline">
-        <label style="color:white;font-size: 33px;font-weight: 600" >
-          ${systemName}
-        </label>
-    </div>
-    
-    <div id="checkinput" class="layui-inline"
-         style="position:absolute;top:25%;left:70%;background-color: #017be3;
-            width: 300px;height: 50px;border-radius:40px">
-        <input id="check" style="color: #a3e4ff;width: 230px;border:0px;margin-left: 20px;margin-top: 18px;background-color: #017be3;"
-               placeholder="请输入案件名或公诉人名" type="text">
-        <a id="checkBtn" style="cursor:pointer;">
-            <img src="resources/images/搜索.png">
-        </a>
-    </div>
-    <div style="float:right;margin-right:20px;margin-top: 1.8%;" class="layui-inline">
-        <div class="layui-inline">
-            <label id="user" role="${role}" userId="${user.id}" style="color: #ffffff" userName="${user.username}">${myUser.personName}</label>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header" style="background-color: #008cef">
+        <div class="layui-logo" style="width: 300px">  <div class="layui-inline"><img style="height: 50px;" height="50" width="48.5" src="resources/images/mini.png"></div>
+           <div class="layui-inline" style=""><span style="font-size: 22px;color: #FFFFFF;">人事档案管理系统</span></div>
         </div>
-        <div class="layui-inline" style="margin-left: 30px">
-            <img src="resources/images/辅助线.png">
-        </div>
-        <div class="layui-inline" id="logoutBtn" style="margin-left: 20px;cursor:pointer;">
-            <a href="logout" onclick="return confirm('确认退出登录吗？')">
-                <img src="resources/images/关闭.png">
-            </a>
+        <!-- 头部区域-->
+        <ul id="topNav" class="layui-nav layui-layout-left" lay-filter="top" style="margin-left:10%;">
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <label id="user" role="${role}" userId="${user.id}" style="color: #ffffff" userName="${user.username}">${myUser.personName}</label>
+                </a>
+            </li>
+            <li class="layui-nav-item"><a href="logout" id="logoutBtn" onclick="return confirm('确认退出登录吗？')">退出</a></li>
+        </ul>
+    </div>
+
+    <div id="left" class="layui-side layui-bg-black" style="display: none">
+        <div  class="layui-side-scroll">
+            <!-- 左侧导航区域-->
+            <ul id="leftNav" class="layui-nav layui-nav-tree"  lay-filter="left"></ul>
         </div>
     </div>
-</div>
-<div class="layui-side layui-bg-black" id="leftNav" style="margin-top:90px;background-color:#242e46 !important;width:224px;">
-       <div class="layui-side-scroll"  style="background:#242e46">
-           <ul class="layui-nav layui-nav-tree layui-inline" lay-filter="leftNav" id="leftNavBody" style="width:224px;background:#242e46">
-              
-           </ul>
-       </div>
-</div>
-<div id="body" style="border: solid 1px silver; height: 100%; overflow-y: auto">
-	<div id="tabContent" lay-filter="tabContent" class="layui-tab layui-tab-card" style="margin-left: 225px; margin-top: 0px; height: 95%" lay-allowclose="true">
-	  <ul id="tabTitleContent" class="layui-tab-title">
-	  </ul>
-	  <div class="layui-tab-content" style="height: 90%; padding: 0;">
-	  </div>
-	</div>
-</div>
-<script type="text/html" id="navTpl">
-	<div id="{id}" class="layui-inline"
-         style="cursor:pointer;margin-left:20px;width: 114px;height: 93px;background-color: #008cef;">
-        <div class="hover" style="width: 100%;height: 100%" >
-            <img id="live-icon" src="{icon}" style="margin-top: 24px;margin-left: 45px">
-            <div style="margin-top: 10px;text-align: center">
-                <label style="color:white">
-                    {text}
-                </label>
+    <!--主页-->
+    <div id="index"style="border: solid 1px silver; height: 1000px; overflow-y: hidden;border: 1px solid;">
+        <iframe id="pageContent" src="" style="width: 100%;height: 100%; border: 0;overflow-y: hidden;"></iframe>
+    </div>
+    <!--主体及其Tab-->
+    <div id="body" style="border: solid 1px silver; height: 1000px; overflow-y: auto;border: 1px solid;display: none">
+        <div id="tabContent" lay-filter="tabContent" class="layui-tab layui-tab-card" style="margin-left: 200px; margin-top: 0px; height: 95%;" lay-allowclose="true">
+            <ul id="tabTitleContent" class="layui-tab-title">
+            </ul>
+            <div id="context" class="layui-tab-content" style="height: 90%; padding: 0;">
             </div>
         </div>
     </div>
-</script>
-<script type="text/html" id="leftTemp">
-	<li class="layui-nav-item layui-nav-itemed">
-        <a href="javascript:;" style="font-size: 16px;"><img id="live-icon" src="{icon}" style="height: 13px; margin-top: -3px"> {menuName}</a>
-        <dl class="layui-nav-child">
-            
-    	</dl>
-    </li>
-</script>
-<script type="text/html" id="leftItemTemp">
-	<dd><a href="javascript:;">{leftMenuName}</a></dd>
-</script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/resources/layui/beginne/plugins/layui/jquery-1.7.2.js"></script>
-<script type="text/javascript">
-function parenttest(msg) {
-	var tab = $('.layui-tab-item');
-	$($(tab).find("iframe")).each(function(i,val){
-		try {
-			$(tab).find("iframe")[i].contentWindow.childtest(msg)
-		} catch (e) {
-			// TODO: handle exception
-		}
-	})
-}
-</script>
+
+    <div id="foot" class="layui-footer" style="display: none">
+        <!-- 底部固定区域 -->
+        © zc
+    </div>
+</div>
 </body>
+<script>
+    layui.use(['form','element'],function(){
+        var form = layui.form;
+        var element = layui.element;
+
+        var pageContent = $('#pageContent');         //页面元素DOM
+        var left = $('#left');
+        var index = $('#index');
+        var body = $('#body');
+        var leftNav = $('#leftNav');
+        var foot = $('#foot');
+        var tabContent = $('#tabContent');
+        var topNav = $('#topNav');
+        var roleName = $('#user').attr("role");
+        var pathName = window.document.location.pathname;
+        pathName = pathName.substr(0, pathName.indexOf('/', 1));
+        var iframe = '<iframe src="{url}" style="width: 100%;height: {height}px; border: 0"  id="iframe{id}"></iframe>';
+
+        var leftData = [                                                            //菜单数据
+            {name : "组织结构管理",value : 0,url : "/systemManagement/organize_index",type : "系统管理"},
+            {name : "系统用户管理",value : 0,url : "/systemManagement/user_index",type : "系统管理"},
+            {name : "系统操作日志",value : 0,url : "/systemManagement/operation_index",type : "系统管理"},
+            {name : "岗位管理",value : 0,url : "/systemManagement/station_index",type : "系统管理"}
+
+        ];
+
+        var topDataAdmin = [
+            {name : "首页",url : ''},
+            {name : "考勤信息管理",url : '/attendanceManage/attendance_index'},
+            {name : "奖惩信息管理",url : '/infosManagement/userInfos_index'},
+            {name : "培训计划管理",url : '/trainingPlan/trainPlan_index'},
+            {name : "工资信息管理",url : '/salaryManage/salary_index'}
+        ] ;
+
+        var topDataUser = [
+            {name : "考勤信息",url : '/attendanceManage/myattendances_index'},
+            {name : "奖惩信息",url : '/infosManagement/myInfos_index'},
+            {name : "培训信息",url : '/trainingPlan/userTrainPlan_index'},
+            {name : "我的工资",url : '/salaryManage/mySalary_index'},
+            {name : "我的简历",url : '/personResumeManage/personResume_index'},
+            {name : "用户信息",url : '/systemManagement/myuser_index'}
+        ] ;
+
+        init();
+        function init(){
+            mask();
+            if (roleName == "admin"){           //加载管理员菜单资源
+                init_topNavAdmin(topDataAdmin);
+                init_deleteTap();
+                pageContent.attr("src","index");
+            } else if (roleName == "user"){     //加载用户菜单资源
+                init_topNavUser(topDataUser)
+                pageContent.attr("src","attendanceManage/myattendances_index");
+            } else {
+                parent.layer.msg("系统加载错误！请刷新页面。。。",{icon : 2});
+                return;
+            }
+            layer.close(loading);
+        }
+
+        function init_topNavAdmin(data){		//初始化管理员头部菜单
+            topNav.empty();
+            for(var i = 0; i < data.length; i++){
+                create_oneTopNav(data[i].name);
+                oneTopNavClick(data[i]);
+            }
+            create_topNav("系统管理");
+            onclick_topNav("系统管理");
+            element.render("nav","top");
+        }
+
+        function init_topNavUser(data){		//初始化用户头部菜单
+            topNav.empty();
+            for(var i = 0; i < data.length; i++){
+                create_oneTopNav(data[i].name);
+                oneTopNavClick(data[i]);
+            }
+            element.render("nav","top");
+        }
+
+        function create_oneTopNav(data){      //创建一个没有左侧的头部菜单
+            var li = $('<li></li>');
+            var a = $('<a></a>');
+            li.attr("class","layui-nav-item");
+            a.css("cursor","pointer");
+            a.css("font-size","15px");
+            a.attr("id",data);
+            a.html(data);
+            li.append(a);
+            topNav.append(li);
+        }
+
+        function oneTopNavClick(data){         //监听一个没有左侧的头部菜单按钮
+            var btn = $('#'+data.name);
+            btn.on('click',function(){
+                index.css("display","");
+                left.css("display","none");
+                body.css("display","none");
+                foot.css("display","none");
+                pageContent.attr("src",pathName+data.url);
+                for(var i = 0; i < leftData.length; i++){
+                    element.tabDelete('tabContent', leftData[i].name);
+                    leftData[i].value = 0;
+                }
+            })
+        }
+
+        function init_deleteTap(){					//关闭标签时事件
+            element.on('tabDelete(tabContent)', function(){
+                var name = $(this).parent().attr("lay-id");
+                for(var i = 0; i < leftData.length; i++){
+                    if(leftData[i].name == name){
+                        leftData[i].value = 0;
+                    }
+                }
+            });
+        }
+
+        function create_topNav(data){		//创建头部菜单  data为菜单名称
+            var li = $('<li></li>');
+            var a = $('<a></a>');
+            li.attr("class","layui-nav-item");
+            a.css("cursor","pointer");
+            a.css("font-size","15px");
+            a.attr("id",data);
+            a.html(data);
+            li.append(a);
+            topNav.append(li);
+        }
+
+        function onclick_topNav(data){		//监听头部菜单按钮  data为菜单名称
+            var btn = $('#'+data);
+            var this_data = [];
+            for(var i = 0; i < leftData.length; i++){
+                if(leftData[i].type == data){
+                    this_data.push(leftData[i]);
+                }
+            }
+            btn.on('click',function(){
+                index.css("display","none");
+                left.css("display","");
+                body.css("display","");
+                foot.css("display","");
+                init_leftNav(this_data,data);
+                init_leftNavOnclick(this_data,data);
+            })
+        }
+
+        function init_leftNav(data,type){           //初始化左侧菜单
+            leftNav.empty();
+            var this_data = [];
+            for(var i = 0;i < data.length; i++){
+                if(data[i].type == type){
+                    this_data.push(data[i]);
+                }
+            }
+            for(var i = 0 ; i < this_data.length; i++){
+                var tapName = this_data[i].name;
+                var li = $('<li></li>');
+                li.attr("class","layui-nav-item");
+                var a = $('<a></a>');
+                a.html(tapName);
+                a.css("cursor","pointer");
+                li.append(a);
+                leftNav.append(li);
+            }
+            element.render("nav","left");
+        }
+
+        function init_leftNavOnclick(data,type){      //监听左侧菜单按钮
+            var this_data = [];
+            for(var i = 0;i < data.length; i++){
+                if(data[i].type == type){
+                    this_data.push(data[i]);
+                }
+            }
+            element.on('nav(left)', function(elem){
+                var url = null;
+                var tapName = elem.children().html()
+                for(var key = 0; key < this_data.length; key++){
+                    var msg = this_data[key];
+                    if(msg.name == tapName &&msg.value == 1){
+                        element.tabChange('tabContent', tapName);
+                        return;
+                    }
+                    if(msg.name == tapName){
+                        url = msg.url;
+                    }
+                }
+                var context = iframe.replace("{url}",pathName+url);
+                context =  context.replace("{height}",tabContent.height() - 50);
+                context = context.replace("{id}",tapName);
+                element.tabAdd('tabContent', {
+                    title: tapName
+                    ,content: context //支持传入html
+                    ,id: tapName
+                });
+                element.tabChange('tabContent', tapName);
+                for(var key = 0; key < this_data.length; key++){
+                    if(this_data[key].name == tapName){
+                        this_data[key].value = 1;
+                    }
+                }
+            });
+        }
+
+        function mask(){
+            loading = layer.load(1, {
+                shade: [0.1,'#fff']
+            });
+        }
+
+    })
+</script>
 </html>

@@ -21,7 +21,7 @@ layui.use(['form','table','laydate'],function(){
         table.render({
             id: 'reload',
             elem: '#table',
-            height: 'full-110',
+            height: 'full-200',
             method:'post',
             url: 'systemManagement/load_operation',
             cellMinWidth: 100,

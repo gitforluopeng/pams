@@ -1,0 +1,38 @@
+package pms.com.domain.analyze.controller;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import pms.com.domain.analyze.services.EduCountServiceInter;
+
+@Controller
+public class AnalyzeController {
+	@Resource
+	private EduCountServiceInter eduCountServer;
+	
+	//首页统计页面映射
+	@RequestMapping(value="/analyze_index",method=RequestMethod.GET)
+	public String loadAnalyzeIndex(){
+		return "pms/analyze_index.jsp";
+	}
+	
+	/*
+	 * 统计员工学历
+	 */
+	@RequestMapping(value="/load_eduCountEcharData",method=RequestMethod.GET)
+	@ResponseBody
+	public List<Map<String, Object>> getEduCountEchar(){
+		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+		result=eduCountServer.getEduCountEcharData();
+		return result;
+	}
+}

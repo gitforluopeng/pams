@@ -1,0 +1,10 @@
+package pms.com.domain.analyze.model.DAO;
+
+import java.util.List;
+
+import pms.com.domain.analyze.model.EduCount;
+
+public interface EduCountDao {
+	public List<EduCount> getEduCount();
+	public Integer getAllCount();
+}

@@ -87,7 +87,7 @@
         ];
 
         var topDataAdmin = [
-            {name : "首页",url : ''},
+            {name : "首页",url : '/main_view'},
             {name : "考勤信息管理",url : '/attendanceManage/attendance_index'},
             {name : "奖惩信息管理",url : '/infosManagement/userInfos_index'},
             {name : "培训计划管理",url : '/trainingPlan/trainPlan_index'},
@@ -109,7 +109,7 @@
             if (roleName == "admin"){           //加载管理员菜单资源
                 init_topNavAdmin(topDataAdmin);
                 init_deleteTap();
-                pageContent.attr("src","index");
+                pageContent.attr("src","main_view");
             } else if (roleName == "user"){     //加载用户菜单资源
                 init_topNavUser(topDataUser)
                 pageContent.attr("src","attendanceManage/myattendances_index");

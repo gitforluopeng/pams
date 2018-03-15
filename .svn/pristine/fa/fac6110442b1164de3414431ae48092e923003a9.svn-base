@@ -1,0 +1,7 @@
+package pms.com.domain.analyze.services;
+
+import java.util.Map;
+
+public interface EduCountServiceInter {
+	public Map<String, Object> getEduCountEcharData();
+}

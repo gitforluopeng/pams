@@ -102,7 +102,7 @@
 			style="margin-top: 150px;width: 100%;height: 50px">
 			<div
 				style="width: 100%;text-align: center;height: 15px;font-size: 14px;font-family:Microsoft YaHei;color: #999999">
-				@2017-2020海克斯科技有限公司 版权所有</div>
+				@2017-2020 海克斯科技有限公司 版权所有</div>
 			<div
 				style="margin-top: 10px;width: 100%;text-align: center;height: 15px;font-size: 14px;font-family:Microsoft YaHei;color: #999999">
 				电话：028-86119898 传真：028-88888888 www.haikesi.com</div>

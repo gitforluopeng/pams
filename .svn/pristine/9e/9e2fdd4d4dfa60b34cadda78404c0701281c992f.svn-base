@@ -1,0 +1,121 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%
+String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+<!DOCTYPE html>
+<html>
+<head>
+
+	<base href="<%=basePath%>">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="resources/layui/css/layui.css" media="all">
+    <script type="text/javascript" src="resources/echarts.min.js"></script>
+	<script type="text/javascript" src="resources/layui/layui.js"></script>
+	<script type="text/javascript" src="resources/jquery-3.2.1.min.js"></script>
+	<style type="text/css">
+		html,body{
+			margin: 0px;
+			height: 100%;
+			overflow-y: hidden;
+		}
+	</style>
+</head>
+<body style="background-color: #e8fff5">
+  <div style="width: 100%;height: 80%;">
+  	<div id="pie" style="width: 48%;height: 100%;float: left;">
+  	</div>
+  </div>
+  <div id="bar" style="width: 48%;height: 100%;float: right;">
+  </div>
+</body>
+<script type="text/javascript">
+	layui.use('form',function(){
+		var pie = document.getElementById("pie");
+		var bar = document.getElementById("bar");
+		var pieChart = echarts.init(pie);
+		var barChart = echarts.init(bar);
+		
+		var optionPie = null;
+		var optionBar = null;
+		optionPie = {
+			title : {
+				text : '员工学历分析统计图',
+				x : 'center'
+			},
+			tooltip : {
+				trigger : 'item',
+				formatter : "{a} <br/>{b} : {c} ({d}%)"
+			},
+			legend : {
+				orient : 'vertical',
+				left : 'left',
+				data : ""
+			},
+			series : [
+				{
+					name : '学历类型',
+					type : 'pie',
+					radius : '55%',
+					center : [ '50%', '60%' ],
+					data : "",
+					itemStyle : {
+						emphasis : {
+							shadowBlur : 10,
+							shadowOffsetX : 0,
+							shadowColor : 'rgba(0, 0, 0, 0.5)'
+						}
+					}
+				}
+			]
+		};
+
+		barOptioin = {
+			xAxis : {
+				type : 'category',
+				data : [ 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun' ]
+			},
+			yAxis : {
+				type : 'value'
+			},
+			series : [ {
+				data : [ 120, 200, 150, 80, 70, 110, 130 ],
+				type : 'bar'
+			} ]
+		};
+		init();
+		function init() {
+			init_data();
+		}
+		
+		function init_data() {
+			$.ajax({
+				type: 'get',
+				url: 'analyze/load_eduCountEcharData',
+				success: function(data) {
+					console.info(data);
+					init_pieChart(data);
+					init_barChart(data);
+				},
+				error: function () {
+					layer.msg("加载数据失败！请刷新页面。。。",{icon : 2});
+				}
+			})
+		}
+		
+		function init_pieChart(data) {
+			option.series[0].data = data;
+			var title = [];
+			for(var i = 0; i < data.length; i++){
+				title.push(data[i].name);
+			}
+			option.legend.data = title;
+			pieChart.setOption(option);
+		}
+		
+		function init_barChart(){
+			barChart.setOption(barOptioin);
+		}
+	})
+</script>
+</html>

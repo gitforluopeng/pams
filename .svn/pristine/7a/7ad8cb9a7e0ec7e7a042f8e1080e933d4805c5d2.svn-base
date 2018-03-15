@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pms.com.domain.analyze.model.DAO.EduCountDao">
+    <select id="getEduCount" resultType="pms.com.domain.analyze.model.EduCount">
+        select t.education as name, COUNT(1) as value from system_user t  GROUP BY t.education
+    </select>
+    <select id="getAllCount" resultType="java.lang.Integer">
+        select COUNT(1) from system_user t
+    </select>
+</mapper>

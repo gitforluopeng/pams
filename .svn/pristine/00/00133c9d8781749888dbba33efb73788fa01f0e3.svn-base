@@ -1,0 +1,44 @@
+package pms.com.domain.analyze.services.Imp;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.springframework.stereotype.Service;
+
+import pms.com.domain.analyze.model.EduCount;
+import pms.com.domain.analyze.model.DAO.EduCountDao;
+import pms.com.domain.analyze.services.EduCountServiceInter;
+@Service
+public class EduCountServer implements EduCountServiceInter {
+	
+	@Resource
+	private SqlSessionFactory sessionFactory;
+	
+	@Override
+	public Map<String, Object> getEduCountEcharData() {
+		SqlSession session = sessionFactory.openSession();
+		Map<String, Object> map=new HashMap<String, Object>();
+		EduCountDao eduCountDao=session.getMapper(EduCountDao.class);
+		List<EduCount> eduCounts=eduCountDao.getEduCount();
+		Integer allCount=eduCountDao.getAllCount();
+		List<Integer> allNum=new ArrayList<Integer>();
+		List<String>  allEdu=new ArrayList<String>();
+		if(!eduCounts.isEmpty()){
+			for (EduCount eduCount : eduCounts) {
+				allEdu.add(eduCount.getEducation());
+				allNum.add(eduCount.getNum());
+			}
+		}
+		map.put("education", allEdu);
+		map.put("count", allNum);
+		map.put("allCount", allCount);
+		return map;
+	}
+
+}

@@ -77,8 +77,6 @@ public class HomeController {
 	
 	@RequestMapping("/main_view")
 	public String gsHomeView(){
-		LoggerUtil.consleLogger.debug("ssssssssssssssssssssssssssssssssssssssssssssssss");
-		LoggerUtil.consleLogger.debug(ObjectUtil.sizeOf(this));
 		return "pms/pmsHome/index.jsp";
 	}
 }

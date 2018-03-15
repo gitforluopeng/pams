@@ -1,0 +1,44 @@
+package pms.com.domain.analyze.model;
+
+import java.io.Serializable;
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import pms.com.utils.MapUtil;
+@SuppressWarnings("serial")
+@JsonIgnoreProperties(value={"handler"})
+public class EduCount implements Serializable{
+	private String education;//学历名称
+	private Integer num;//个数
+	/**
+	 * @return the education
+	 */
+	public String getEducation() {
+		return education;
+	}
+	/**
+	 * @param education the education to set
+	 */
+	public void setEducation(String education) {
+		this.education = education;
+	}
+	/**
+	 * @return the num
+	 */
+	public Integer getNum() {
+		return num;
+	}
+	/**
+	 * @param num the num to set
+	 */
+	public void setNum(Integer num) {
+		this.num = num;
+	}
+	/**
+	 * set the value to Map
+	 */
+	public Map<String,Object> toMap() {
+		return MapUtil.ObjToMap(this);
+	}
+}

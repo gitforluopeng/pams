@@ -11,17 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import lb.soft.com.objectSize.ObjectUtil;
 import pms.com.domain.systemManagement.model.MyUser;
-import pms.com.domain.systemManagement.model.SystemName;
-import pms.com.domain.systemManagement.services.SystemNameServiceInter;
 import pms.com.domain.systemManagement.services.SystemUserServiceInter;
 import pms.com.system.shiro.model.ShiroUser;
 import pms.com.system.shiro.services.MenuServiceInter;
 import pms.com.system.shiro.services.ShiroCacheServiceInter;
 import pms.com.system.shiro.util.UserUtil;
 import pms.com.system.shiro.vo.MenuVo;
-import pms.com.utils.LoggerUtil;
 
 @Controller
 public class HomeController {
@@ -34,8 +30,6 @@ public class HomeController {
 	private ShiroCacheServiceInter shiroCacheService;
 	@Autowired
 	private SystemUserServiceInter systemUserService;
-	@Autowired
-	private SystemNameServiceInter systemNameService;
 	
 	@RequestMapping("/home")
 	public ModelAndView homeView(ModelAndView modelAndView){

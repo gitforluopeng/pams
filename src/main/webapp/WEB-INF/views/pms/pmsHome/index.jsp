@@ -22,20 +22,51 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	</style>
 </head>
 <body style="background-color: #e8fff5">
-  <div style="width: 100%;height: 80%;">
-  	<div class="layui-inline" id="pie" style="width: 48%;height: 100%;">
+  <div style="width: 100%;height: 100%;" class="layui-form">
+  	<div class="layui-inline" style="width: 48%;height: 100%; border-right: 1px solid;">
+  		<div style="width: 100%;height: 72%;margin-top: 8%;">
+  			<div id="pie" style="width: 100%;height: 100%;">
+  			</div>
+  		</div>
   	</div>
-  	<div id="bar" class="layui-inline" style="width: 48%;height: 100%;">
-  </div>
+  	<div class="layui-inline" style="width: 48%;height: 100%">
+  			<div style="width: 100%;height: 6%;margin-top: 2%;margin-left: 10%">
+  				<span class="layui-inline">开始时间：</span>
+  				<div class="layui-inline">
+  					<input class="layui-input" id="startTime">
+  				</div>
+  				<span class="layui-inline">结束时间：</span>
+  				<div class="layui-inline">
+  					<input class="layui-input" id="endTime">
+  				</div>
+  				<div class="layui-inline" style="margin-left: 10%;">
+  					<button class="layui-btn layui-btn-normal" id="queryBtn">统计分析</button>
+  				</div>
+  			</div>
+  			<div id="bar"  style="width: 100%;height: 70%;"> </div>
+  	</div>
+  	
+ 
   </div>
   
 </body>
 <script type="text/javascript">
-	layui.use('form',function(){
+	layui.use(['laydate','form'],function(){
+		var form = layui.form;
+		var laydate = layui.laydate;
+		
+		laydate.render({
+			elem: "#startTime"
+		})
+		laydate.render({
+			elem: "#endTime"
+		})
+		
 		var pie = document.getElementById("pie");
 		var bar = document.getElementById("bar");
 		var pieChart = echarts.init(pie);
 		var barChart = echarts.init(bar);
+		var queryBtn = $("#queryBtn");
 		
 		var optionPie = null;
 		var optionBar = null;
@@ -72,31 +103,56 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		};
 
 		barOptioin = {
+			title : {
+				text : '员工考勤分析统计图',
+				x : 'center'
+			},
 			xAxis : {
 				type : 'category',
-				data : [ 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun' ]
+				data : ""
 			},
 			yAxis : {
 				type : 'value'
 			},
 			series : [ {
-				data : [ 120, 200, 150, 80, 70, 110, 130 ],
+				data : "",
 				type : 'bar'
 			} ]
 		};
 		init();
 		function init() {
-			init_data();
+			var startTime;
+			var endTime;
+			init_data(startTime,endTime);
+			init_queryBtn();
 		}
 		
-		function init_data() {
+		function init_queryBtn(){
+			queryBtn.on('click',function(){
+				var startTime = $('#startTime').val();
+				var endTime = $('#endTime').val();
+				init_data(startTime,endTime);
+			})
+		}
+		
+		function init_data(startTime,endTime) {
 			$.ajax({
 				type: 'get',
 				url: 'analyze/load_eduCountEcharData',
 				success: function(data) {
 					console.info(data);
 					init_pieChart(data);
-					init_barChart(data);
+					$.ajax({
+						type: "get",
+						url: 'analyze/load_attCountEcharData',
+						data: {
+							"queStartTime": startTime,
+							"queEndTime": endTime
+						},
+						success: function (data){
+							init_barChart(data.name,data.value);
+						}
+					})
 				},
 				error: function () {
 					layer.msg("加载数据失败！请刷新页面。。。",{icon : 2});
@@ -114,7 +170,28 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			pieChart.setOption(optionPie);
 		}
 		
-		function init_barChart(){
+		function init_barChart(name,value){
+			var names = [];
+			for(var i = 0; i < name.length; i++){
+				if(name[i] == 1){
+					names.push("已到岗");
+				}
+				if(name[i] == 2){
+					names.push("未到岗");
+				}
+				if(name[i] == 3){
+					names.push("已请假");
+				}
+				if(name[i] == 4){
+					names.push("迟到");
+				}
+				if(name[i] == 5){
+					names.push("早退");
+				}
+			}
+			console.info(names);
+			barOptioin.xAxis.data = names;
+			barOptioin.series[0].data = value;
 			barChart.setOption(barOptioin);
 		}
 	})

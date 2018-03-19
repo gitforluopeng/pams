@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pms.com.domain.systemManagement.model.DAO.StationDao">
+    <sql id="queryCondition">
+        <if test="id !=null and id !=''">
+			 and t.id=#{id}
+		</if>
+		<if test="stationName !=null and stationName !=''">
+			 and t.stationName like CONCAT(CONCAT('%', #{stationName}), '%')
+		</if>
+		<if test="createUserId !=null and createUserId !=''">
+			 and t.createUserId=#{createUserId}
+		</if>
+		<if test="createUserName !=null and createUserName !=''">
+			 and t.createUserName=#{createUserName}
+		</if>
+		<if test="createPersonName !=null and createPersonName !=''">
+			 and t.createPersonName=#{createPersonName}
+		</if>
+		<if test="createTime !=null and createTime !=''">
+			 and t.createTime=#{createTime}
+		</if>
+    </sql>
+    <select id="getStation" parameterType="java.util.HashMap" resultType="pms.com.domain.systemManagement.model.Station">
+        select t.* from station t where 1=1
+        <include refid="queryCondition"></include>
+        <if test="pageSize !=null and pageSize !=''">
+		     limit #{startNum},#{pageSize}
+		</if>
+    </select>
+    <select id="getStationCount" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+        select count(1) from station t where 1=1
+        <include refid="queryCondition"></include>
+    </select>
+    <select id="getStationByName" parameterType="pms.com.domain.systemManagement.model.Station" resultType="pms.com.domain.systemManagement.model.Station">
+        select * from station where stationName=#{stationName}
+    </select>
+    <insert id="addStation" parameterType="pms.com.domain.systemManagement.model.Station" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into station (stationName,createUserId,createUserName,createPersonName,createTime) values 
+        (#{stationName},#{createUserId},#{createUserName},#{createPersonName},#{createTime})
+    </insert>
+    <update id="updateStation" parameterType="pms.com.domain.systemManagement.model.Station">
+        update station set stationName=#{stationName} where id=#{id}
+    </update>
+    <delete id="deleteStation" parameterType="pms.com.domain.systemManagement.model.Station">
+        delete from station where id=#{id}
+    </delete>
+</mapper>

@@ -20,7 +20,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <div class="layui-form" id="div-all" lay-filter="selectdiv">
     <div id="div-form">
         <div style="margin-top: 20px;width: 100%;" class="layui-inline">
-            <div style="margin-left: 10%;width:70px;" class="layui-inline"> <span style="color: red">*&nbsp;</span>单位名称:</div>
+            <div style="margin-left: 2%;width:90px;" class="layui-inline"> <span style="color: red">*&nbsp;</span>单位名称:</div>
             <div style="width: 350px;height:40px;margin-left: 18px" class="layui-inline">
                <select id="untilnames" class="layui-select">
                    <option value="">请选择</option>
@@ -28,13 +28,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
             </div>
         </div>
         <div style="margin-top: 25px;width: 100%;" class="layui-inline">
-            <div style="margin-left: 10%;width:70px;" class="layui-inline"> <span style="color: red">*&nbsp;</span>部门名称:</div>
+            <div style="margin-left: 2%;width:90px;" class="layui-inline"> <span style="color: red">*&nbsp;</span>部门名称:</div>
             <div style="width: 350px;height:40px;margin-left: 18px" class="layui-inline">
                 <input id="deptname" class="layui-input" placeholder="请输入部门名称">
             </div>
         </div>
         <div style="margin-top: 25px;width: 100%;" class="layui-inline">
-            <div style="margin-left: 10%;width:70px;" class="layui-inline"> <span style="color: red">*&nbsp;</span>职能描述:</div>
+            <div style="margin-left: 2%;width:90px;" class="layui-inline"> <span style="color: red">*&nbsp;</span>职能描述:</div>
             <div style="width: 351px;height:40px;margin-left: 18px;" class="layui-inline">
                 <textarea id="remarks" style="height:140px" required  placeholder="请输入内容" class="layui-textarea"></textarea>
             </div>

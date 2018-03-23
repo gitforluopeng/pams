@@ -69,6 +69,7 @@
 			</list>
 		</property>
 	</bean>
+	
 	<bean name="fileUploadServer" scope="prototype" class="pms.com.domain.common.service.impl.FileUploadServer">
 		<property name="tempPath" value="WEB-INF/fileTemp"/>
 		<property name="savePath" value="resources/fileSave"/>
